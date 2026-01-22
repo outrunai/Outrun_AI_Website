@@ -82,7 +82,7 @@ All sections are defined in `index.html` with semantic HTML5 elements:
 | `#consultoria` | Consultation CTA | Paid consultation booking |
 | `#contacto` | Contact form | Gmail integration form |
 | `#testimonios` | Client reviews | 4 testimonial cards with star ratings, reviews in Spanish, and author photos |
-| `#fundador` | Founder bio | About the founder |
+| `#fundador` | Founder bio | Founder profile with bio, photo, and social links |
 | `footer` | Footer | Copyright and links |
 
 ---
