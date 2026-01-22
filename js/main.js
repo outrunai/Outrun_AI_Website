@@ -595,6 +595,7 @@ function initTestimonialsCarousel() {
         document.addEventListener('keydown', handleKeyNavigation);
 
         currentIndex = 0;
+        updateCarouselHeight();
     }
 
     function disableCarousel() {
@@ -603,6 +604,7 @@ function initTestimonialsCarousel() {
 
         grid.classList.remove('testimonials-carousel');
         grid.removeAttribute('aria-live');
+        grid.style.height = '';
 
         cards.forEach(card => {
             card.classList.remove('active');
@@ -640,6 +642,15 @@ function initTestimonialsCarousel() {
         });
         currentIndex = index;
         updateDots();
+        updateCarouselHeight();
+    }
+
+    function updateCarouselHeight() {
+        const activeCard = cards[currentIndex];
+        if (activeCard && grid) {
+            const cardHeight = activeCard.offsetHeight;
+            grid.style.height = cardHeight + 'px';
+        }
     }
 
     function showNext() {
@@ -686,7 +697,12 @@ function initTestimonialsCarousel() {
     let resizeTimeout;
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(checkViewport, 250);
+        resizeTimeout = setTimeout(function() {
+            checkViewport();
+            if (isCarouselMode) {
+                updateCarouselHeight();
+            }
+        }, 250);
     });
 }
 

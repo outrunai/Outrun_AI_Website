@@ -901,19 +901,21 @@ header nav {
 /* Carousel Styles (Mobile) */
 .testimonials-carousel {
     position: relative;
-    overflow: visible;
-    padding: 0 60px;
-    min-height: 400px;
+    overflow: hidden;
+    min-height: 300px;
+    transition: height 0.3s ease;
 }
 
 .testimonials-carousel .testimonial-card {
     position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     opacity: 0;
+    z-index: 1;
     pointer-events: none;
-    width: calc(100% - 120px);
-    left: 60px;
     transform: scale(0.95);
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s 0.4s;
     will-change: opacity, transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -921,11 +923,10 @@ header nav {
 
 .testimonials-carousel .testimonial-card.active {
     opacity: 1;
-    position: relative;
+    z-index: 10;
     pointer-events: auto;
     transform: scale(1);
-    width: 100%;
-    left: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), z-index 0s 0s;
 }
 
 .carousel-btn-prev,
@@ -939,16 +940,18 @@ header nav {
     padding: var(--spacing-sm);
     cursor: pointer;
     border-radius: 50%;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     font-size: 1.5rem;
-    z-index: 10;
+    z-index: 20;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .carousel-btn-prev:hover,
@@ -994,21 +997,12 @@ header nav {
 
 /* Small mobile devices */
 @media (max-width: 480px) {
-    .testimonials-carousel {
-        padding: 0 50px;
-    }
-
     .carousel-btn-prev {
         left: 5px;
     }
 
     .carousel-btn-next {
         right: 5px;
-    }
-
-    .testimonials-carousel .testimonial-card {
-        width: calc(100% - 100px);
-        left: 50px;
     }
 }
 
