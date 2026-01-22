@@ -1,0 +1,210 @@
+# ========================================
+# Outrun AI - Apache Configuration
+# Production-optimized .htaccess
+# ========================================
+
+# Enable Rewrite Engine
+RewriteEngine On
+
+# ----------------------------------------
+# HTTPS Redirect (uncomment when SSL is configured)
+# ----------------------------------------
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ----------------------------------------
+# WWW to non-WWW redirect (choose one)
+# ----------------------------------------
+# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+# RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# ----------------------------------------
+# GZIP Compression
+# ----------------------------------------
+<IfModule mod_deflate.c>
+    # Compress HTML, CSS, JavaScript, Text, XML and fonts
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE image/x-icon
+    AddOutputFilterByType DEFLATE font/ttf
+    AddOutputFilterByType DEFLATE font/otf
+    AddOutputFilterByType DEFLATE font/woff
+    AddOutputFilterByType DEFLATE font/woff2
+    
+    # Remove browser bugs for older browsers
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+    Header append Vary User-Agent
+</IfModule>
+
+# ----------------------------------------
+# Browser Caching
+# ----------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Default expiration: 1 month
+    ExpiresDefault "access plus 1 month"
+    
+    # HTML - 1 day (allow content updates)
+    ExpiresByType text/html "access plus 1 day"
+    
+    # CSS and JavaScript - 1 year
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType application/x-javascript "access plus 1 year"
+    
+    # Images - 1 year
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType image/vnd.microsoft.icon "access plus 1 year"
+    
+    # Fonts - 1 year
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    
+    # Data interchange
+    ExpiresByType application/json "access plus 0 seconds"
+    ExpiresByType application/xml "access plus 0 seconds"
+    ExpiresByType text/xml "access plus 0 seconds"
+</IfModule>
+
+# ----------------------------------------
+# Cache-Control Headers
+# ----------------------------------------
+<IfModule mod_headers.c>
+    # CSS and JS: 1 year cache, immutable
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    
+    # Images: 1 year cache
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+    
+    # Fonts: 1 year cache
+    <FilesMatch "\.(ttf|otf|woff|woff2)$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+    
+    # HTML: 1 day cache with revalidation
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "public, max-age=86400, must-revalidate"
+    </FilesMatch>
+    
+    # PHP: No cache
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+</IfModule>
+
+# ----------------------------------------
+# Security Headers
+# ----------------------------------------
+<IfModule mod_headers.c>
+    # Prevent MIME type sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Prevent clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # XSS Protection
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content Security Policy (adjust as needed)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://wa.me; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'self';"
+    
+    # Permissions Policy
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# ----------------------------------------
+# Disable ETags (for better caching)
+# ----------------------------------------
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+FileETag None
+
+# ----------------------------------------
+# Keep-Alive Connections
+# ----------------------------------------
+<IfModule mod_headers.c>
+    Header set Connection keep-alive
+</IfModule>
+
+# ----------------------------------------
+# Prevent Directory Browsing
+# ----------------------------------------
+Options -Indexes
+
+# ----------------------------------------
+# Protect Sensitive Files
+# ----------------------------------------
+<FilesMatch "(^\.htaccess|\.git|\.env|config\.php|composer\.(json|lock))$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ----------------------------------------
+# Block Bad Bots (optional, uncomment if needed)
+# ----------------------------------------
+# RewriteCond %{HTTP_USER_AGENT} ^.*(bot|crawl|spider|scraper).*$ [NC]
+# RewriteRule .* - [F,L]
+
+# ----------------------------------------
+# Custom Error Pages (optional)
+# ----------------------------------------
+# ErrorDocument 404 /404.html
+# ErrorDocument 500 /500.html
+
+# ----------------------------------------
+# PHP Settings (if applicable)
+# ----------------------------------------
+<IfModule mod_php.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 60
+    php_value max_input_time 60
+</IfModule>
+
+# ----------------------------------------
+# WebP Support - Serve WebP if available
+# ----------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTP_ACCEPT} image/webp
+    RewriteCond %{REQUEST_FILENAME} (.*)\.(jpe?g|png)$
+    RewriteCond %{REQUEST_FILENAME}\.webp -f
+    RewriteRule ^(.+)\.(jpe?g|png)$ $1.$2.webp [T=image/webp,L]
+</IfModule>
+
+# Add WebP MIME type
+<IfModule mod_mime.c>
+    AddType image/webp .webp
+</IfModule>

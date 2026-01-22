@@ -20,16 +20,17 @@
     <meta property="og:description" content="Automatiza las interacciones con tus pacientes en WhatsApp">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="es_CO">
-    <meta property="og:image" content="./assets/images/og-image.jpg">
+    <meta property="og:image" content="./assets/images/logo/logo_image.webp">
     
     <title>Outrun AI - Automatización WhatsApp para Clínicas en Medellín</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="./assets/images/logo/logo_image.png">
-    <link rel="apple-touch-icon" href="./assets/images/logo/logo_image.png">
+    <link rel="icon" type="image/png" href="./assets/images/logo/logo_image.webp">
+    <link rel="apple-touch-icon" href="./assets/images/logo/logo_image.webp">
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="preload" href="./css/styles.min.css" as="style">
+    <link rel="stylesheet" href="./css/styles.min.css">
 </head>
 <body>
     <!-- Skip Link for Accessibility -->
@@ -40,7 +41,7 @@
         <nav aria-label="Navegación principal">
             <!-- Logo/Brand -->
             <a href="#hero" class="nav-brand">
-                <img src="./assets/images/logo/logo_image.png" alt="Outrun AI Logo" class="nav-logo">
+                <img src="./assets/images/logo/logo_image.webp" alt="Outrun AI Logo" class="nav-logo">
                 Outrun AI
             </a>
             
@@ -97,7 +98,10 @@
                 </div>
                 
                 <div class="hero-image">
-                    <img data-src="./assets/images/Hero_image/Hero_image.png" alt="Automatización de WhatsApp para clínicas en Medellín" loading="lazy">
+                    <picture>
+                        <source srcset="./assets/images/Hero_image/Hero_image.webp" type="image/webp">
+                        <img src="./assets/images/Hero_image/Hero_image.png" alt="Automatización de WhatsApp para clínicas en Medellín" width="600" height="400" loading="eager">
+                    </picture>
                 </div>
             </div>
         </section>
@@ -344,7 +348,10 @@
                         <div class="testimonial-rating" aria-label="5 de 5 estrellas">★★★★★</div>
                         <p class="testimonial-text">"Outrun AI transformó completamente la comunicación con mis pacientes. Ahora respondo consultas las 24 horas sin perder tiempo valioso. La automatización es tan natural que mis pacientes ni siquiera notan que es un sistema automatizado. ¡Altamente recomendado!"</p>
                         <div class="testimonial-author">
-                            <img src="assets/images/testimonials/maria-gomez.jpg" alt="Foto de Dra. María Fernanda Gómez" class="author-photo" loading="lazy">
+                            <picture>
+                                <source srcset="./assets/images/testimonials/maria-gomez.webp" type="image/webp">
+                                <img src="./assets/images/testimonials/maria-gomez.jpg" alt="Foto de Dra. María Fernanda Gómez" class="author-photo" loading="lazy" width="50" height="50">
+                            </picture>
                             <div class="author-info">
                                 <h4 class="author-name">Dra. María Fernanda Gómez</h4>
                                 <p class="author-role">Cirujana Plástica</p>
@@ -356,7 +363,10 @@
                         <div class="testimonial-rating" aria-label="5 de 5 estrellas">★★★★★</div>
                         <p class="testimonial-text">"Desde que implementé Outrun AI, mis pacientes reciben recordatorios automáticos de citas y respuestas inmediatas a sus dudas. He reducido las cancelaciones en un 40% y mi equipo puede enfocarse en lo que realmente importa: la atención clínica."</p>
                         <div class="testimonial-author">
-                            <img src="assets/images/testimonials/carlos-ruiz.jpg" alt="Foto de Dr. Carlos Andrés Ruiz" class="author-photo" loading="lazy">
+                            <picture>
+                                <source srcset="./assets/images/testimonials/carlos-ruiz.webp" type="image/webp">
+                                <img src="./assets/images/testimonials/carlos-ruiz.jpg" alt="Foto de Dr. Carlos Andrés Ruiz" class="author-photo" loading="lazy" width="50" height="50">
+                            </picture>
                             <div class="author-info">
                                 <h4 class="author-name">Dr. Carlos Andrés Ruiz</h4>
                                 <p class="author-role">Ortodoncista</p>
@@ -368,7 +378,10 @@
                         <div class="testimonial-rating" aria-label="5 de 5 estrellas">★★★★★</div>
                         <p class="testimonial-text">"La mejor inversión para mi consultorio. Mis pacientes valoran la atención inmediata y profesional que reciben por WhatsApp. El sistema maneja consultas frecuentes perfectamente y me notifica cuando necesita mi intervención personal."</p>
                         <div class="testimonial-author">
-                            <img src="assets/images/testimonials/valentina-moreno.jpg" alt="Foto de Dra. Valentina Moreno" class="author-photo" loading="lazy">
+                            <picture>
+                                <source srcset="./assets/images/testimonials/valentina-moreno.webp" type="image/webp">
+                                <img src="./assets/images/testimonials/valentina-moreno.jpg" alt="Foto de Dra. Valentina Moreno" class="author-photo" loading="lazy" width="50" height="50">
+                            </picture>
                             <div class="author-info">
                                 <h4 class="author-name">Dra. Valentina Moreno</h4>
                                 <p class="author-role">Dermatóloga</p>
@@ -380,7 +393,10 @@
                         <div class="testimonial-rating" aria-label="5 de 5 estrellas">★★★★★</div>
                         <p class="testimonial-text">"Outrun AI me ayudó a modernizar mi práctica dental. La automatización de WhatsApp es intuitiva, confiable y mis pacientes están más satisfechos que nunca. El retorno de inversión fue evidente desde el primer mes."</p>
                         <div class="testimonial-author">
-                            <img src="assets/images/testimonials/santiago-perez.jpg" alt="Foto de Dr. Santiago Pérez" class="author-photo" loading="lazy">
+                            <picture>
+                                <source srcset="./assets/images/testimonials/santiago-perez.webp" type="image/webp">
+                                <img src="./assets/images/testimonials/santiago-perez.jpg" alt="Foto de Dr. Santiago Pérez" class="author-photo" loading="lazy" width="50" height="50">
+                            </picture>
                             <div class="author-info">
                                 <h4 class="author-name">Dr. Santiago Pérez</h4>
                                 <p class="author-role">Odontólogo</p>
@@ -398,8 +414,10 @@
                 
                 <div class="founder-content">
                     <div class="founder-image">
-                        <!-- Reemplaza esta URL con tu foto profesional: ./assets/images/founder.jpg -->
-                        <img src="./assets/images/founder.jpg" alt="Foto del fundador de Outrun AI" loading="lazy" width="400" height="400">
+                        <picture>
+                            <source srcset="./assets/images/founder.webp" type="image/webp">
+                            <img src="./assets/images/founder.jpg" alt="Foto del fundador de Outrun AI" loading="lazy" width="400" height="400">
+                        </picture>
                     </div>
                     
                     <div class="founder-bio">
@@ -444,7 +462,7 @@
                 <!-- Company Info Column -->
                 <div class="footer-column footer-company">
                     <div class="footer-brand">
-                        <img src="./assets/images/logo/outrun-ai-logo.jpg" alt="Outrun AI Logo" class="footer-logo" width="50" height="50">
+                        <img src="./assets/images/logo/logo_image.webp" alt="Outrun AI Logo" class="footer-logo" width="50" height="50">
                         <span class="footer-brand-name">Outrun AI</span>
                     </div>
                     <p class="footer-tagline">Automatización inteligente de WhatsApp para clínicas en Medellín</p>
@@ -534,6 +552,6 @@
     </noscript>
 
     <!-- Scripts -->
-    <script src="./js/main.js" defer></script>
+    <script src="./js/main.min.js" defer></script>
 </body>
 </html>

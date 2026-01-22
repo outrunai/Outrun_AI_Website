@@ -121,41 +121,6 @@ function showMessage(type, message) {
 }
 
 /* ========================================
-   Lazy Loading Images
-   ======================================== */
-
-/**
- * Initialize lazy loading for images with data-src attribute
- */
-function initLazyLoading() {
-    const lazyImages = document.querySelectorAll('img[data-src]');
-    
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.removeAttribute('data-src');
-                    observer.unobserve(img);
-                }
-            });
-        }, {
-            rootMargin: '50px 0px',
-            threshold: 0.01
-        });
-        
-        lazyImages.forEach(img => imageObserver.observe(img));
-    } else {
-        // Fallback for browsers without Intersection Observer
-        lazyImages.forEach(img => {
-            img.src = img.dataset.src;
-            img.removeAttribute('data-src');
-        });
-    }
-}
-
-/* ========================================
    Mobile Menu Toggle
    ======================================== */
 
@@ -716,7 +681,6 @@ function initBackToTop() {
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all modules
-    initLazyLoading();
     initMobileMenu();
     initSmoothScroll();
     updateActiveNavLink();

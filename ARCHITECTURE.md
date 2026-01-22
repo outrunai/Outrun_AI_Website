@@ -408,4 +408,187 @@ sequenceDiagram
 
 ---
 
+---
+
+## VPS Resource Management
+
+The website and N8N automations share VPS resources. This section documents optimization strategies for minimal footprint.
+
+### Resource Allocation Strategy
+
+**Website Resource Profile:**
+- Static file serving: Minimal CPU usage
+- PHP contact form: Occasional spikes (< 1% CPU)
+- Memory footprint: ~50MB for Apache/Nginx
+- Disk I/O: Negligible (static files cached)
+
+**N8N Resource Profile:**
+- Continuous background process
+- Memory: 200-500MB depending on workflows
+- CPU: Variable based on automation triggers
+- Database: SQLite or PostgreSQL
+
+**Resource Limits (Recommended):**
+```
+Website: 100MB RAM, 5% CPU
+N8N: 400MB RAM, 20% CPU
+Buffer: 100MB RAM, 5% CPU (for spikes)
+```
+
+### Optimization Strategies
+
+#### 1. Web Server Configuration
+
+**For Apache (MPM Event - lower memory):**
+```apache
+# /etc/apache2/mods-available/mpm_event.conf
+<IfModule mpm_event_module>
+    StartServers             2
+    MinSpareThreads         25
+    MaxSpareThreads         75
+    ThreadLimit             64
+    ThreadsPerChild         25
+    MaxRequestWorkers       50
+    MaxConnectionsPerChild  1000
+</IfModule>
+```
+
+**For Nginx (recommended for lower memory):**
+```nginx
+# /etc/nginx/nginx.conf
+worker_processes auto;
+worker_connections 512;
+keepalive_timeout 5;
+```
+
+#### 2. PHP Optimization
+
+**PHP-FPM Configuration:**
+```ini
+# /etc/php/8.1/fpm/pool.d/www.conf
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+pm.max_requests = 500
+```
+
+**OPcache Settings:**
+```ini
+# /etc/php/8.1/fpm/conf.d/10-opcache.ini
+opcache.enable=1
+opcache.memory_consumption=64
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=4000
+opcache.revalidate_freq=60
+```
+
+#### 3. N8N Configuration
+
+**Memory Limit:**
+```bash
+# In N8N service file or .env
+NODE_OPTIONS=--max-old-space-size=512
+```
+
+**Run N8N on different port:**
+```bash
+# Default: 5678
+N8N_PORT=5678
+```
+
+**Systemd Service File:**
+```ini
+# /etc/systemd/system/n8n.service
+[Unit]
+Description=n8n - Workflow Automation
+After=network.target
+
+[Service]
+Type=simple
+User=n8n
+Environment=NODE_OPTIONS=--max-old-space-size=512
+ExecStart=/usr/bin/n8n start
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**Schedule heavy workflows during off-peak hours** (using N8N Cron triggers):
+- Avoid running heavy automations during business hours (9am-6pm Colombia time)
+- Schedule batch processing for early morning (2am-5am)
+
+### Monitoring Commands
+
+```bash
+# Real-time resource monitoring
+htop
+
+# Check memory usage
+free -h
+
+# Monitor specific processes
+watch -n 5 'ps aux | grep -E "nginx|apache|php|n8n" | grep -v grep'
+
+# Check disk usage
+df -h
+
+# View N8N logs
+journalctl -u n8n -f
+
+# View Apache/Nginx logs
+tail -f /var/log/apache2/outrunai_error.log
+tail -f /var/log/nginx/error.log
+```
+
+### Troubleshooting
+
+| Issue | Possible Cause | Solution |
+|-------|----------------|----------|
+| Website slow | N8N workflow running | Check `htop` for CPU spikes, wait for workflow completion |
+| N8N fails | Memory exhausted | Restart web server: `systemctl restart apache2` |
+| High memory | Too many PHP workers | Reduce `pm.max_children` in PHP-FPM |
+| 502 errors | PHP-FPM crashed | Check logs: `journalctl -u php8.1-fpm` |
+| N8N OOM | Large workflow | Increase `--max-old-space-size` or optimize workflow |
+
+### Resource Alerts Setup
+
+**Simple monitoring script:**
+```bash
+#!/bin/bash
+# /usr/local/bin/resource-check.sh
+
+MEMORY_THRESHOLD=85
+CPU_THRESHOLD=80
+
+MEMORY_USAGE=$(free | grep Mem | awk '{print int($3/$2 * 100)}')
+CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print int($2)}')
+
+if [ $MEMORY_USAGE -gt $MEMORY_THRESHOLD ]; then
+    echo "HIGH MEMORY: ${MEMORY_USAGE}%" | mail -s "VPS Alert" outrunai6@gmail.com
+fi
+
+if [ $CPU_USAGE -gt $CPU_THRESHOLD ]; then
+    echo "HIGH CPU: ${CPU_USAGE}%" | mail -s "VPS Alert" outrunai6@gmail.com
+fi
+```
+
+**Add to crontab:**
+```bash
+# Run every 5 minutes
+*/5 * * * * /usr/local/bin/resource-check.sh
+```
+
+### Upgrade Considerations
+
+If both services consistently exceed limits:
+1. **First try**: Optimize N8N workflows (reduce polling frequency, use webhooks instead of cron)
+2. **Second try**: Switch to Nginx if using Apache
+3. **Last resort**: Upgrade VPS plan (2GB RAM → 4GB RAM)
+
+---
+
 *Last updated: January 2026*
