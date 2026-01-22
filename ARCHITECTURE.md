@@ -18,6 +18,7 @@ OutrunAI_Website/
 ├── index.html              # Main entry point
 ├── ARCHITECTURE.md         # This file - visual map
 ├── README.md               # Deployment instructions
+├── .gitignore              # Git ignore rules
 ├── css/
 │   └── styles.css          # Main stylesheet (mobile-first)
 ├── js/
@@ -28,7 +29,9 @@ OutrunAI_Website/
 │   └── icons/              # SVG icons for services
 │       └── .gitkeep
 └── php/
-    └── .gitkeep            # Contact form handler (future)
+    ├── contact.php         # Contact form handler
+    ├── config.php          # SMTP credentials (gitignored)
+    └── config.example.php  # Config template for setup
 ```
 
 ---
@@ -40,7 +43,9 @@ OutrunAI_Website/
 | `index.html` | Main HTML structure, SEO meta tags | `styles.css`, `main.js` |
 | `css/styles.css` | Mobile-first responsive styles | None |
 | `js/main.js` | Interactive features, form validation | None (vanilla JS) |
-| `php/contact.php` | Contact form email handler (future) | Gmail SMTP/API |
+| `php/contact.php` | Contact form email handler | Gmail SMTP via PHPMailer |
+| `php/config.php` | SMTP credentials (gitignored) | None |
+| `php/config.example.php` | Configuration template | None |
 | `assets/images/` | Image assets (founder, testimonials, OG image) | None |
 | `assets/icons/` | SVG icons for services section | None |
 
@@ -141,6 +146,7 @@ Defined in `:root` for consistent theming:
 | `initLazyLoading()` | Intersection Observer for images |
 | `initMobileMenu()` | Hamburger menu toggle |
 | `initSmoothScroll()` | Enhanced anchor link scrolling |
+| `initContactForm()` | Contact form validation & AJAX submission |
 
 ---
 
@@ -217,7 +223,7 @@ Defined in `:root` for consistent theming:
 
 ### Planned Features
 
-- [ ] `php/contact.php` - Gmail SMTP integration
+- [x] `php/contact.php` - Gmail SMTP integration ✓
 - [ ] WhatsApp button integration
 - [ ] Google Analytics tracking
 - [ ] Cookie consent banner
@@ -305,6 +311,99 @@ sequenceDiagram
 - ✅ `og:locale="es_CO"` for social sharing
 - ✅ Spanish content throughout all sections
 - ✅ Colombian phone number format validation
+
+---
+
+---
+
+## Contact Form Flow
+
+The contact form implements a complete client-server validation flow with Gmail SMTP integration:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Browser
+    participant JavaScript
+    participant PHP
+    participant Gmail
+    
+    User->>Browser: Fill contact form
+    User->>Browser: Click "Enviar Mensaje"
+    Browser->>JavaScript: Submit event
+    JavaScript->>JavaScript: Validate fields (name, email, phone, message)
+    
+    alt Validation fails
+        JavaScript->>Browser: Show error messages in Spanish
+        Browser->>User: Display validation errors
+    else Validation passes
+        JavaScript->>JavaScript: Disable button, show "Enviando..."
+        JavaScript->>PHP: POST to php/contact.php
+        PHP->>PHP: Sanitize & validate inputs
+        PHP->>PHP: Check honeypot & rate limit
+        
+        alt Server validation fails
+            PHP->>JavaScript: JSON error response
+            JavaScript->>Browser: Show error message
+            Browser->>User: Display error
+        else Server validation passes
+            PHP->>Gmail: Send email via SMTP
+            
+            alt Email sent successfully
+                Gmail->>PHP: Success confirmation
+                PHP->>JavaScript: JSON success response
+                JavaScript->>Browser: Show success message
+                JavaScript->>Browser: Reset form
+                Browser->>User: "¡Mensaje enviado exitosamente!"
+            else Email failed
+                Gmail->>PHP: Error
+                PHP->>JavaScript: JSON error response
+                JavaScript->>Browser: Show error message
+                Browser->>User: Display error
+            end
+        end
+    end
+```
+
+### Contact Form Configuration
+
+**Environment Variables (in `php/config.php`):**
+
+| Variable | Description |
+|----------|-------------|
+| `SMTP_HOST` | Gmail SMTP server (smtp.gmail.com) |
+| `SMTP_PORT` | SMTP port (587 for TLS) |
+| `SMTP_USERNAME` | Your Gmail address |
+| `SMTP_PASSWORD` | Gmail App Password (16 chars) |
+| `CONTACT_EMAIL` | Email to receive messages |
+| `ALLOWED_REFERER` | Domain for CSRF protection |
+
+### Security Features
+
+- **Honeypot field**: Hidden field to catch bots
+- **Rate limiting**: 5 requests per hour per IP
+- **Input sanitization**: `htmlspecialchars()` and `strip_tags()`
+- **CSRF protection**: Referer header validation
+- **Server-side validation**: Duplicate of client-side checks
+
+### Gmail App Password Setup
+
+1. Go to Google Account → Security
+2. Enable 2-Step Verification
+3. Go to "App passwords" section
+4. Select "Mail" and "Other (Custom name)"
+5. Enter "Outrun AI Website" as the name
+6. Copy the 16-character password to `config.php`
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "Connection refused" | Check SMTP_PORT (587 for TLS, 465 for SSL) |
+| "Authentication failed" | Verify App Password, not regular password |
+| "Less secure app" error | Use App Password with 2FA enabled |
+| Emails in spam | Configure SPF/DKIM records in DNS |
+| Rate limit errors | Wait 1 hour or check rate limit file in temp |
 
 ---
 

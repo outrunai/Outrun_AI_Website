@@ -235,7 +235,85 @@
         <section id="contacto" class="section" aria-labelledby="contacto-title">
             <div class="container">
                 <h2 id="contacto-title" class="section-title">Contáctanos</h2>
-                <!-- Contact form placeholder -->
+                
+                <form id="contact-form" class="contact-form" method="POST" action="php/contact.php" novalidate>
+                    <!-- Form status message -->
+                    <div class="form-message" role="alert" aria-live="polite"></div>
+                    
+                    <!-- Honeypot field for spam protection -->
+                    <div class="honeypot" aria-hidden="true">
+                        <label for="website">Website</label>
+                        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                    </div>
+                    
+                    <!-- Name Field -->
+                    <div class="form-group">
+                        <label for="nombre">Nombre <span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="nombre" 
+                            name="nombre" 
+                            required 
+                            maxlength="100"
+                            aria-required="true"
+                            aria-describedby="nombre-error"
+                            placeholder="Tu nombre completo"
+                        >
+                        <span id="nombre-error" class="error-message" role="alert"></span>
+                    </div>
+                    
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico <span class="required">*</span></label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required
+                            aria-required="true"
+                            aria-describedby="email-error"
+                            placeholder="tu@email.com"
+                        >
+                        <span id="email-error" class="error-message" role="alert"></span>
+                    </div>
+                    
+                    <!-- Phone Field -->
+                    <div class="form-group">
+                        <label for="telefono">Teléfono <span class="required">*</span></label>
+                        <input 
+                            type="tel" 
+                            id="telefono" 
+                            name="telefono" 
+                            required
+                            aria-required="true"
+                            aria-describedby="telefono-error"
+                            placeholder="300 123 4567"
+                            pattern="[0-9]{3}[\s]?[0-9]{3}[\s]?[0-9]{4}"
+                        >
+                        <span id="telefono-error" class="error-message" role="alert"></span>
+                    </div>
+                    
+                    <!-- Message Field -->
+                    <div class="form-group">
+                        <label for="mensaje">Mensaje <span class="required">*</span></label>
+                        <textarea 
+                            id="mensaje" 
+                            name="mensaje" 
+                            rows="6" 
+                            required
+                            maxlength="1000"
+                            aria-required="true"
+                            aria-describedby="mensaje-error"
+                            placeholder="¿Cómo podemos ayudarte?"
+                        ></textarea>
+                        <span id="mensaje-error" class="error-message" role="alert"></span>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-primary contact-submit">
+                        Enviar Mensaje
+                    </button>
+                </form>
             </div>
         </section>
 

@@ -354,6 +354,159 @@ function initConsultationBooking() {
 }
 
 /* ========================================
+   Contact Form Validation & Submission
+   ======================================== */
+
+function initContactForm() {
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+
+    const submitBtn = form.querySelector('.contact-submit');
+    const formMessage = form.querySelector('.form-message');
+    
+    // Field configurations with validation rules and error messages
+    const fields = {
+        nombre: {
+            validate: (value) => value.trim().length >= 2,
+            errorMessage: 'Por favor ingresa tu nombre completo'
+        },
+        email: {
+            validate: (value) => validateEmail(value),
+            errorMessage: 'Por favor ingresa un correo electrónico válido'
+        },
+        telefono: {
+            validate: (value) => validatePhone(value),
+            errorMessage: 'Por favor ingresa un número de teléfono válido (ej: 300 123 4567)'
+        },
+        mensaje: {
+            validate: (value) => value.trim().length >= 10,
+            errorMessage: 'Por favor ingresa un mensaje (mínimo 10 caracteres)'
+        }
+    };
+
+    // Set field error state
+    function setFieldError(fieldName, hasError) {
+        const input = form.querySelector(`#${fieldName}`);
+        const formGroup = input.closest('.form-group');
+        const errorSpan = form.querySelector(`#${fieldName}-error`);
+        
+        if (hasError) {
+            formGroup.classList.add('error');
+            input.setAttribute('aria-invalid', 'true');
+            errorSpan.textContent = fields[fieldName].errorMessage;
+        } else {
+            formGroup.classList.remove('error');
+            input.setAttribute('aria-invalid', 'false');
+            errorSpan.textContent = '';
+        }
+    }
+
+    // Validate single field
+    function validateField(fieldName) {
+        const input = form.querySelector(`#${fieldName}`);
+        const isValid = fields[fieldName].validate(input.value);
+        setFieldError(fieldName, !isValid);
+        return isValid;
+    }
+
+    // Validate all fields
+    function validateAllFields() {
+        let isFormValid = true;
+        Object.keys(fields).forEach(fieldName => {
+            if (!validateField(fieldName)) {
+                isFormValid = false;
+            }
+        });
+        return isFormValid;
+    }
+
+    // Show form message
+    function showFormMessage(message, type) {
+        formMessage.textContent = message;
+        formMessage.className = `form-message ${type} show`;
+        
+        if (type === 'success') {
+            setTimeout(() => {
+                formMessage.classList.remove('show');
+            }, 5000);
+        }
+    }
+
+    // Hide form message
+    function hideFormMessage() {
+        formMessage.classList.remove('show');
+    }
+
+    // Add blur validation to each field
+    Object.keys(fields).forEach(fieldName => {
+        const input = form.querySelector(`#${fieldName}`);
+        
+        input.addEventListener('blur', () => {
+            validateField(fieldName);
+        });
+        
+        input.addEventListener('input', () => {
+            const formGroup = input.closest('.form-group');
+            if (formGroup.classList.contains('error')) {
+                validateField(fieldName);
+            }
+            hideFormMessage();
+        });
+    });
+
+    // Form submission handler
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Check honeypot
+        const honeypot = form.querySelector('#website');
+        if (honeypot && honeypot.value) {
+            return; // Bot detected
+        }
+
+        // Validate all fields
+        if (!validateAllFields()) {
+            showFormMessage('Por favor corrige los errores en el formulario.', 'error');
+            return;
+        }
+
+        // Disable submit button
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando...';
+        hideFormMessage();
+
+        try {
+            const formData = new FormData(form);
+            
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showFormMessage('¡Mensaje enviado exitosamente! Te contactaremos pronto.', 'success');
+                form.reset();
+                // Clear any lingering error states
+                Object.keys(fields).forEach(fieldName => {
+                    setFieldError(fieldName, false);
+                });
+            } else {
+                showFormMessage(result.message || 'Hubo un error al enviar el mensaje. Por favor intenta nuevamente.', 'error');
+            }
+        } catch (error) {
+            console.error('Contact form error:', error);
+            showFormMessage('Hubo un error al enviar el mensaje. Por favor intenta nuevamente.', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
+    });
+}
+
+/* ========================================
    DOMContentLoaded - Initialize All
    ======================================== */
 
@@ -364,6 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     updateActiveNavLink();
     initConsultationBooking();
+    initContactForm();
     
     console.log('Outrun AI - Website initialized');
 });
