@@ -99,8 +99,12 @@ function validateEmail($email) {
 }
 
 function validatePhone($phone) {
-    // Colombian phone format: 3XX XXX XXXX or 3XXXXXXXXX
-    $cleaned = preg_replace('/[\s\-\(\)]/', '', $phone);
+    // Colombian phone format: +57 3XX XXX XXXX, 3XX XXX XXXX, or 3XXXXXXXXX
+    $cleaned = preg_replace('/[\s\-\(\)\+]/', '', $phone);
+    // Remove 57 country code prefix if present
+    if (strpos($cleaned, '57') === 0 && strlen($cleaned) > 10) {
+        $cleaned = substr($cleaned, 2);
+    }
     return preg_match('/^3[0-9]{9}$/', $cleaned);
 }
 

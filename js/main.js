@@ -507,6 +507,132 @@ function initContactForm() {
 }
 
 /* ========================================
+   Testimonials Carousel (Mobile)
+   ======================================== */
+
+function initTestimonialsCarousel() {
+    const grid = document.querySelector('.testimonials-grid');
+    if (!grid) return;
+    
+    const cards = grid.querySelectorAll('.testimonial-card');
+    if (cards.length === 0) return;
+    
+    let currentIndex = 0;
+    let isCarouselMode = false;
+    let prevBtn = null;
+    let nextBtn = null;
+    
+    function enableCarousel() {
+        if (isCarouselMode) return;
+        isCarouselMode = true;
+        
+        grid.classList.add('testimonials-carousel');
+        grid.setAttribute('aria-live', 'polite');
+        grid.setAttribute('aria-label', 'Carrusel de testimonios');
+        
+        cards.forEach((card, index) => {
+            card.classList.toggle('active', index === 0);
+            card.setAttribute('aria-hidden', index !== 0);
+        });
+        
+        prevBtn = document.createElement('button');
+        prevBtn.className = 'carousel-btn-prev';
+        prevBtn.innerHTML = '&#8249;';
+        prevBtn.setAttribute('aria-label', 'Testimonio anterior');
+        prevBtn.addEventListener('click', showPrevious);
+        
+        nextBtn = document.createElement('button');
+        nextBtn.className = 'carousel-btn-next';
+        nextBtn.innerHTML = '&#8250;';
+        nextBtn.setAttribute('aria-label', 'Siguiente testimonio');
+        nextBtn.addEventListener('click', showNext);
+        
+        grid.parentElement.style.position = 'relative';
+        grid.parentElement.appendChild(prevBtn);
+        grid.parentElement.appendChild(nextBtn);
+        
+        document.addEventListener('keydown', handleKeyNavigation);
+        
+        currentIndex = 0;
+    }
+    
+    function disableCarousel() {
+        if (!isCarouselMode) return;
+        isCarouselMode = false;
+        
+        grid.classList.remove('testimonials-carousel');
+        grid.removeAttribute('aria-live');
+        
+        cards.forEach(card => {
+            card.classList.remove('active');
+            card.removeAttribute('aria-hidden');
+        });
+        
+        if (prevBtn) {
+            prevBtn.remove();
+            prevBtn = null;
+        }
+        if (nextBtn) {
+            nextBtn.remove();
+            nextBtn = null;
+        }
+        
+        document.removeEventListener('keydown', handleKeyNavigation);
+    }
+    
+    function showSlide(index) {
+        cards.forEach((card, i) => {
+            const isActive = i === index;
+            card.classList.toggle('active', isActive);
+            card.setAttribute('aria-hidden', !isActive);
+        });
+        currentIndex = index;
+    }
+    
+    function showNext() {
+        const nextIndex = (currentIndex + 1) % cards.length;
+        showSlide(nextIndex);
+    }
+    
+    function showPrevious() {
+        const prevIndex = (currentIndex - 1 + cards.length) % cards.length;
+        showSlide(prevIndex);
+    }
+    
+    function handleKeyNavigation(e) {
+        if (!isCarouselMode) return;
+        
+        const testimoniosSection = document.getElementById('testimonios');
+        const rect = testimoniosSection.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        
+        if (!isVisible) return;
+        
+        if (e.key === 'ArrowLeft') {
+            showPrevious();
+        } else if (e.key === 'ArrowRight') {
+            showNext();
+        }
+    }
+    
+    function checkViewport() {
+        if (window.innerWidth < 768) {
+            enableCarousel();
+        } else {
+            disableCarousel();
+        }
+    }
+    
+    checkViewport();
+    
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(checkViewport, 150);
+    });
+}
+
+/* ========================================
    DOMContentLoaded - Initialize All
    ======================================== */
 
@@ -518,6 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateActiveNavLink();
     initConsultationBooking();
     initContactForm();
+    initTestimonialsCarousel();
     
     console.log('Outrun AI - Website initialized');
 });

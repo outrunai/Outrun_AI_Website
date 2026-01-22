@@ -81,7 +81,7 @@ All sections are defined in `index.html` with semantic HTML5 elements:
 | `#servicios` | Services section | 5 service cards for clinic types with icons |
 | `#consultoria` | Consultation CTA | Paid consultation booking |
 | `#contacto` | Contact form | Gmail integration form |
-| `#testimonios` | Client reviews | Customer testimonials |
+| `#testimonios` | Client reviews | 4 testimonial cards with star ratings, reviews in Spanish, and author photos |
 | `#fundador` | Founder bio | About the founder |
 | `footer` | Footer | Copyright and links |
 
@@ -224,6 +224,7 @@ Defined in `:root` for consistent theming:
 ### Planned Features
 
 - [x] `php/contact.php` - Gmail SMTP integration ✓
+- [x] Testimonials section with grid layout and optional carousel ✓
 - [ ] WhatsApp button integration
 - [ ] Google Analytics tracking
 - [ ] Cookie consent banner
