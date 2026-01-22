@@ -634,15 +634,43 @@ function initTestimonialsCarousel() {
         document.removeEventListener('keydown', handleKeyNavigation);
     }
 
-    function showSlide(index) {
+    function showSlide(index, direction = 'next') {
+        const currentCard = cards[currentIndex];
+        const nextCard = cards[index];
+        
+        // Remove any existing transition classes from all cards
+        cards.forEach(card => {
+            card.classList.remove('slide-out-left', 'slide-out-right', 'slide-in-left', 'slide-in-right');
+        });
+        
+        // Add directional classes for animation
+        if (currentCard && currentCard !== nextCard) {
+            if (direction === 'next') {
+                currentCard.classList.add('slide-out-left');
+                nextCard.classList.add('slide-in-right');
+            } else {
+                currentCard.classList.add('slide-out-right');
+                nextCard.classList.add('slide-in-left');
+            }
+        }
+        
+        // Update active states
         cards.forEach((card, i) => {
             const isActive = i === index;
             card.classList.toggle('active', isActive);
             card.setAttribute('aria-hidden', !isActive);
         });
+        
         currentIndex = index;
         updateDots();
         updateCarouselHeight();
+        
+        // Remove transition classes after animation completes
+        setTimeout(() => {
+            cards.forEach(card => {
+                card.classList.remove('slide-out-left', 'slide-out-right', 'slide-in-left', 'slide-in-right');
+            });
+        }, 500);
     }
 
     function updateCarouselHeight() {
@@ -655,12 +683,12 @@ function initTestimonialsCarousel() {
 
     function showNext() {
         const nextIndex = (currentIndex + 1) % cards.length;
-        showSlide(nextIndex);
+        showSlide(nextIndex, 'next');
     }
 
     function showPrevious() {
         const prevIndex = (currentIndex - 1 + cards.length) % cards.length;
-        showSlide(prevIndex);
+        showSlide(prevIndex, 'previous');
     }
 
     function handleKeyNavigation(e) {
