@@ -1,0 +1,278 @@
+/* ========================================
+   Outrun AI - Main Stylesheet
+   Mobile-First Responsive Design
+   ======================================== */
+
+/* CSS Reset/Normalization */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* ========================================
+   CSS Custom Properties (Variables)
+   ======================================== */
+:root {
+    /* Colors */
+    --primary-color: #0066FF;
+    --secondary-color: #00D9FF;
+    --text-dark: #1a1a1a;
+    --text-light: #666666;
+    --background-light: #FFFFFF;
+    --background-gray: #F5F7FA;
+    --success-color: #10B981;
+    --error-color: #EF4444;
+    
+    /* Typography */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-secondary: 'Poppins', sans-serif;
+    
+    /* Layout */
+    --max-width: 1200px;
+    
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 4rem;
+    --spacing-xl: 6rem;
+    
+    /* Effects */
+    --border-radius: 8px;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+/* ========================================
+   Typography Foundation
+   ======================================== */
+body {
+    font-family: var(--font-primary);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background: var(--background-light);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-secondary);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-sm);
+}
+
+h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+h2 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+h3 {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+h4 {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+}
+
+h5 {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+h6 {
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+}
+
+p {
+    margin-bottom: var(--spacing-sm);
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--secondary-color);
+}
+
+/* ========================================
+   Layout Utilities
+   ======================================== */
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.section {
+    padding: var(--spacing-lg) 0;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-dark);
+}
+
+/* ========================================
+   Header Styles
+   ======================================== */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--background-light);
+    box-shadow: var(--shadow-sm);
+}
+
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+/* ========================================
+   Section Backgrounds
+   ======================================== */
+#hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--background-light);
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+#hero h1 {
+    color: var(--background-light);
+}
+
+#servicios {
+    background: var(--background-gray);
+}
+
+#consultoria {
+    background: var(--background-light);
+}
+
+#contacto {
+    background: var(--background-gray);
+}
+
+#testimonios {
+    background: var(--background-light);
+}
+
+#fundador {
+    background: var(--background-gray);
+}
+
+/* ========================================
+   Footer Styles
+   ======================================== */
+footer {
+    background: var(--text-dark);
+    color: var(--background-light);
+    padding: var(--spacing-md) 0;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+/* ========================================
+   Performance Optimizations
+   ======================================== */
+.section {
+    contain: layout;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ========================================
+   Media Queries - Mobile First
+   ======================================== */
+
+/* Tablet (768px+) */
+@media (min-width: 768px) {
+    .container {
+        padding: 0 var(--spacing-lg);
+    }
+    
+    .section {
+        padding: var(--spacing-xl) 0;
+    }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+    header nav {
+        padding: var(--spacing-sm) var(--spacing-lg);
+    }
+}
+
+/* Large Desktop (1440px+) */
+@media (min-width: 1440px) {
+    :root {
+        --max-width: 1400px;
+    }
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus styles for keyboard navigation */
+:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Skip link for accessibility */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary-color);
+    color: var(--background-light);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    z-index: 9999;
+}
+
+.skip-link:focus {
+    top: 0;
+}
