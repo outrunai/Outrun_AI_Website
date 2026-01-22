@@ -901,18 +901,31 @@ header nav {
 /* Carousel Styles (Mobile) */
 .testimonials-carousel {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
+    padding: 0 60px;
+    min-height: 400px;
 }
 
 .testimonials-carousel .testimonial-card {
     position: absolute;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    pointer-events: none;
+    width: calc(100% - 120px);
+    left: 60px;
+    transform: scale(0.95);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    will-change: opacity, transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .testimonials-carousel .testimonial-card.active {
     opacity: 1;
     position: relative;
+    pointer-events: auto;
+    transform: scale(1);
+    width: 100%;
+    left: 0;
 }
 
 .carousel-btn-prev,
@@ -926,12 +939,16 @@ header nav {
     padding: var(--spacing-sm);
     cursor: pointer;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.5rem;
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .carousel-btn-prev:hover,
@@ -940,11 +957,67 @@ header nav {
 }
 
 .carousel-btn-prev {
-    left: -20px;
+    left: 10px;
 }
 
 .carousel-btn-next {
-    right: -20px;
+    right: 10px;
+}
+
+/* Carousel Dot Indicators */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: var(--spacing-md);
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--background-gray);
+    border: 2px solid var(--primary-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.carousel-dot.active {
+    background: var(--primary-color);
+    transform: scale(1.2);
+}
+
+.carousel-dot:hover {
+    background: var(--secondary-color);
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .testimonials-carousel {
+        padding: 0 50px;
+    }
+
+    .carousel-btn-prev {
+        left: 5px;
+    }
+
+    .carousel-btn-next {
+        right: 5px;
+    }
+
+    .testimonials-carousel .testimonial-card {
+        width: calc(100% - 100px);
+        left: 50px;
+    }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .testimonials-carousel .testimonial-card {
+        transition: opacity 0.2s ease;
+        transform: none !important;
+    }
 }
 
 #fundador {
