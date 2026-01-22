@@ -633,6 +633,84 @@ function initTestimonialsCarousel() {
 }
 
 /* ========================================
+   Back to Top Button
+   ======================================== */
+
+/**
+ * Initialize back to top button functionality
+ * Creates a floating button that appears when user scrolls down
+ */
+function initBackToTop() {
+    // Create button element
+    const backToTopBtn = document.createElement('button');
+    backToTopBtn.className = 'back-to-top';
+    backToTopBtn.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+        </svg>
+        <span class="visually-hidden">Volver arriba</span>
+    `;
+    backToTopBtn.setAttribute('aria-label', 'Volver arriba');
+    backToTopBtn.style.cssText = `
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: var(--background-light);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    `;
+    
+    document.body.appendChild(backToTopBtn);
+    
+    // Show/hide button based on scroll position
+    const toggleBackToTop = throttle(() => {
+        const scrollY = window.scrollY || window.pageYOffset;
+        const showThreshold = 400;
+        
+        if (scrollY > showThreshold) {
+            backToTopBtn.style.opacity = '1';
+            backToTopBtn.style.visibility = 'visible';
+        } else {
+            backToTopBtn.style.opacity = '0';
+            backToTopBtn.style.visibility = 'hidden';
+        }
+    }, 100);
+    
+    window.addEventListener('scroll', toggleBackToTop);
+    
+    // Scroll to top on click
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Hover effects
+    backToTopBtn.addEventListener('mouseenter', () => {
+        backToTopBtn.style.transform = 'translateY(-3px)';
+        backToTopBtn.style.boxShadow = '0 6px 16px rgba(0, 102, 255, 0.4)';
+    });
+    
+    backToTopBtn.addEventListener('mouseleave', () => {
+        backToTopBtn.style.transform = 'translateY(0)';
+        backToTopBtn.style.boxShadow = '0 4px 12px rgba(0, 102, 255, 0.3)';
+    });
+}
+
+/* ========================================
    DOMContentLoaded - Initialize All
    ======================================== */
 
@@ -645,6 +723,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initConsultationBooking();
     initContactForm();
     initTestimonialsCarousel();
+    initBackToTop();
     
     console.log('Outrun AI - Website initialized');
 });
