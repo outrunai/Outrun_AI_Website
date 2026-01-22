@@ -174,6 +174,16 @@ function initMobileMenu() {
                 document.body.classList.remove('menu-open');
             }
         });
+        
+        // Close menu when a nav link is clicked
+        const mobileNavLinks = mobileNav.querySelectorAll('a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.setAttribute('aria-expanded', 'false');
+                mobileNav.classList.remove('is-open');
+                document.body.classList.remove('menu-open');
+            });
+        });
     }
 }
 
@@ -213,6 +223,53 @@ function initSmoothScroll() {
 }
 
 /* ========================================
+   Active Navigation State
+   ======================================== */
+
+/**
+ * Update active navigation link based on scroll position
+ * Uses IntersectionObserver for performance
+ */
+function updateActiveNavLink() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a, .mobile-nav a');
+    
+    if (sections.length === 0 || navLinks.length === 0) return;
+    
+    const observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px -80% 0px',
+        threshold: 0
+    };
+    
+    const observerCallback = (entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const sectionId = entry.target.getAttribute('id');
+                
+                // Remove aria-current from all links
+                navLinks.forEach(link => {
+                    link.removeAttribute('aria-current');
+                });
+                
+                // Add aria-current to matching links
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.setAttribute('aria-current', 'page');
+                    }
+                });
+            }
+        });
+    };
+    
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+}
+
+/* ========================================
    Error Handling
    ======================================== */
 
@@ -247,6 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initLazyLoading();
     initMobileMenu();
     initSmoothScroll();
+    updateActiveNavLink();
     
     console.log('Outrun AI - Website initialized');
 });

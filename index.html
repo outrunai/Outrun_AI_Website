@@ -24,24 +24,79 @@
     
     <title>Outrun AI - Automatización WhatsApp para Clínicas en Medellín</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./assets/images/logo/logo_image.png">
+    <link rel="apple-touch-icon" href="./assets/images/logo/logo_image.png">
+    
     <!-- Stylesheets -->
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main" class="skip-link">Saltar al contenido</a>
+
     <!-- Header -->
     <header role="banner">
         <nav aria-label="Navegación principal">
-            <!-- Navigation will be implemented in next phase -->
+            <!-- Logo/Brand -->
+            <a href="#hero" class="nav-brand">
+                <img src="./assets/images/logo/logo_image.png" alt="Outrun AI Logo" class="nav-logo">
+                Outrun AI
+            </a>
+            
+            <!-- Desktop Navigation Links -->
+            <ul class="nav-links">
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#consultoria">Consultoría</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+                <li><a href="#testimonios">Testimonios</a></li>
+            </ul>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="menu-toggle" aria-label="Menú de navegación" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+        
+        <!-- Mobile Navigation -->
+        <nav class="mobile-nav" aria-label="Navegación móvil">
+            <ul>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#consultoria">Consultoría</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+                <li><a href="#testimonios">Testimonios</a></li>
+            </ul>
         </nav>
     </header>
 
     <!-- Main Content -->
-    <main role="main">
+    <main id="main" role="main">
         <!-- Hero Section -->
         <section id="hero" class="section" aria-labelledby="hero-title">
             <div class="container">
-                <h1 id="hero-title">Automatiza tu Clínica con WhatsApp</h1>
-                <!-- Hero content placeholder -->
+                <div class="hero-content">
+                    <h1 id="hero-title">Automatiza las Interacciones de WhatsApp en tu Clínica</h1>
+                    
+                    <p class="hero-subtitle">Soluciones inteligentes de automatización para clínicas estéticas, ortodoncistas, dentistas, dermatólogos y cirujanos plásticos en Medellín</p>
+                    
+                    <ul class="hero-benefits">
+                        <li>✓ Respuestas automáticas 24/7</li>
+                        <li>✓ Gestión eficiente de citas</li>
+                        <li>✓ Seguimiento personalizado de pacientes</li>
+                        <li>✓ Aumenta la satisfacción del cliente</li>
+                    </ul>
+                    
+                    <div class="hero-cta">
+                        <a href="#consultoria" class="btn-primary">Reserva tu Consultoría</a>
+                        <a href="#servicios" class="btn-secondary">Conoce Más</a>
+                    </div>
+                </div>
+                
+                <div class="hero-image">
+                    <img data-src="./assets/images/Hero_image/Hero_image.png" alt="Automatización de WhatsApp para clínicas en Medellín" loading="lazy">
+                </div>
             </div>
         </section>
 
