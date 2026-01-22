@@ -490,6 +490,137 @@ header nav {
     background: var(--background-light);
 }
 
+/* Consultation Content */
+.consultoria-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Pricing Card */
+.pricing-card {
+    background: var(--background-light);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    margin: var(--spacing-lg) auto;
+    max-width: 500px;
+    position: relative;
+    border: 2px solid transparent;
+    background-image: linear-gradient(var(--background-light), var(--background-light)), 
+                      linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+.pricing-header {
+    margin-bottom: var(--spacing-md);
+}
+
+.pricing-amount {
+    display: block;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-xs);
+}
+
+.pricing-duration {
+    display: block;
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+/* Included Features List */
+.included-features {
+    list-style: none;
+    padding: 0;
+    margin: var(--spacing-md) 0;
+    text-align: left;
+}
+
+.included-features li {
+    padding: var(--spacing-xs) 0;
+    color: var(--text-dark);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.included-features li::before {
+    content: "✓";
+    color: var(--success-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* CTA Buttons Container */
+.cta-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.cta-buttons .btn-primary,
+.cta-buttons .btn-secondary {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+}
+
+.btn-whatsapp {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-whatsapp:hover {
+    background: var(--primary-color);
+    color: var(--background-light);
+}
+
+/* Trust Badges */
+.trust-badges {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
+.trust-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+    background: var(--background-gray);
+    border-radius: var(--border-radius);
+}
+
+.badge-icon {
+    color: var(--success-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.badge-text {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Pricing Card Animation */
+.pricing-card {
+    animation: fadeInUp 0.6s ease;
+    animation-fill-mode: both;
+    animation-delay: 0.2s;
+}
+
 #contacto {
     background: var(--background-gray);
 }
@@ -634,6 +765,21 @@ img {
         grid-template-columns: repeat(2, 1fr);
         gap: var(--spacing-lg);
     }
+    
+    /* Consultation - Tablet */
+    .cta-buttons {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .cta-buttons .btn-primary,
+    .cta-buttons .btn-secondary {
+        width: auto;
+    }
+    
+    .trust-badges {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 /* Desktop (1024px+) */
@@ -667,6 +813,15 @@ img {
     
     .service-card {
         padding: var(--spacing-lg);
+    }
+    
+    /* Consultation - Desktop */
+    .pricing-card {
+        padding: var(--spacing-xl) var(--spacing-lg);
+    }
+    
+    .included-features li {
+        font-size: 1.1rem;
     }
 }
 

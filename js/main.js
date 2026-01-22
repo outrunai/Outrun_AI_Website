@@ -6,6 +6,14 @@
  */
 
 /* ========================================
+   Consultation Booking Configuration
+   ======================================== */
+
+const WHATSAPP_NUMBER = '573052064654'
+const WHATSAPP_MESSAGE = 'Hola, me gustaría reservar una consultoría personalizada con Outrun AI';
+const BOOKING_URL = '#contacto';
+
+/* ========================================
    Utility Functions
    ======================================== */
 
@@ -296,6 +304,56 @@ window.addEventListener('load', () => {
  */
 
 /* ========================================
+   Consultation Booking
+   ======================================== */
+
+/**
+ * Initialize consultation booking functionality
+ * Handles WhatsApp and primary booking button actions
+ */
+function initConsultationBooking() {
+    const btnWhatsApp = document.getElementById('btn-whatsapp');
+    const btnReservar = document.getElementById('btn-reservar');
+    
+    if (btnWhatsApp) {
+        btnWhatsApp.addEventListener('click', function(e) {
+            e.preventDefault();
+            const encodedMessage = encodeURIComponent(WHATSAPP_MESSAGE);
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+            console.log('WhatsApp booking initiated');
+        });
+    }
+    
+    if (btnReservar) {
+        btnReservar.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = BOOKING_URL;
+            console.log('Primary booking initiated');
+        });
+    }
+    
+    // Scroll-triggered animation for pricing card
+    const pricingCard = document.querySelector('.pricing-card');
+    if (pricingCard && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+        
+        pricingCard.style.opacity = '0';
+        pricingCard.style.transform = 'translateY(30px)';
+        pricingCard.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(pricingCard);
+    }
+}
+
+/* ========================================
    DOMContentLoaded - Initialize All
    ======================================== */
 
@@ -305,6 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initMobileMenu();
     initSmoothScroll();
     updateActiveNavLink();
+    initConsultationBooking();
     
     console.log('Outrun AI - Website initialized');
 });
