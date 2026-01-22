@@ -73,7 +73,7 @@ All sections are defined in `index.html` with semantic HTML5 elements:
 | Section ID | Purpose | Content |
 |------------|---------|---------|
 | `#hero` | Landing section | Value proposition, main CTA |
-| `#servicios` | Services section | Services for different clinic types |
+| `#servicios` | Services section | 5 service cards for clinic types with icons |
 | `#consultoria` | Consultation CTA | Paid consultation booking |
 | `#contacto` | Contact form | Gmail integration form |
 | `#testimonios` | Client reviews | Customer testimonials |
@@ -210,6 +210,10 @@ Defined in `:root` for consistent theming:
 ---
 
 ## Future Enhancements
+
+### Icon Sources
+
+- Service icons: Custom SVG icons in `assets/icons/` (clinica-estetica.svg, ortodoncia.svg, dentista.svg, dermatologo.svg, cirugia-plastica.svg)
 
 ### Planned Features
 
