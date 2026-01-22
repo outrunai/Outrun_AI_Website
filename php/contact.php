@@ -2,9 +2,14 @@
 /**
  * Contact Form Handler
  * Processes contact form submissions and sends emails via Gmail SMTP
- * 
+ *
  * @package OutrunAI
  */
+
+// Enable error reporting for debugging (disable display_errors in production)
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
 // Load configuration
 require_once 'config.php';
@@ -89,8 +94,13 @@ function sanitizeInput($input) {
     return htmlspecialchars(strip_tags(trim($input)), ENT_QUOTES, 'UTF-8');
 }
 
+// Safe strlen that works without mbstring extension
+function safeStrlen($str) {
+    return function_exists('mb_strlen') ? mb_strlen($str, 'UTF-8') : strlen($str);
+}
+
 function validateName($name) {
-    $length = mb_strlen($name);
+    $length = safeStrlen($name);
     return $length >= 2 && $length <= 100;
 }
 
@@ -109,7 +119,7 @@ function validatePhone($phone) {
 }
 
 function validateMessage($message) {
-    $length = mb_strlen($message);
+    $length = safeStrlen($message);
     return $length >= 10 && $length <= 1000;
 }
 
