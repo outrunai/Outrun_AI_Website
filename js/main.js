@@ -691,8 +691,6 @@ function initCalculator() {
         const lostPatients = parseInt(lostPatientsInput.value);
         const attendedPatients = parseInt(attendedPatientsInput.value);
 
-        console.log('Updating calculator...', { price, attendedPatients, lostPatients });
-
         // Format currency for Colombian Pesos
         const formatter = new Intl.NumberFormat('es-CO', {
             style: 'currency',
@@ -717,7 +715,6 @@ function initCalculator() {
         if (globalLossChart) {
             globalLossChart.data.datasets[0].data = [currentRevenue, potentialRevenue];
             globalLossChart.update('active'); // 'active' for reliable updates in Chart.js 4.x
-            console.log('Chart updated');
         }
 
         // Update slider background gradient for visual feedback
@@ -744,23 +741,14 @@ function initCalculator() {
     }
 
     // Event listeners for real-time updates
-    consultationInput.addEventListener('input', () => {
-        console.log('slider changed');
-        updateCalc();
-    });
-    attendedPatientsInput.addEventListener('input', () => {
-        console.log('slider changed');
-        updateCalc();
-    });
-    lostPatientsInput.addEventListener('input', () => {
-        console.log('slider changed');
-        updateCalc();
-    });
+    consultationInput.addEventListener('input', updateCalc);
+    attendedPatientsInput.addEventListener('input', updateCalc);
+    lostPatientsInput.addEventListener('input', updateCalc);
 
     // Initial calculation on page load
     updateCalc();
 
-    console.log('ROI Calculator fully initialized');
+    console.log('Calculator initialized');
 }
 
 /* ========================================

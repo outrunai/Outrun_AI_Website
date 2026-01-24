@@ -747,6 +747,11 @@ input[type="range"]::-moz-range-track {
     box-shadow: var(--shadow-md);
 }
 
+.chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 /* Responsive: Desktop */
 @media (min-width: 768px) {
     .calculator-grid {
