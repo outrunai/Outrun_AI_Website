@@ -559,17 +559,31 @@ function initBackToTop() {
    ROI Calculator
    ======================================== */
 
+// Global chart instance for ROI Calculator
+let globalLossChart = null;
+
 /**
  * Initialize ROI Calculator functionality
  * Handles slider interactions, real-time calculations, and chart updates
  */
 function initCalculator() {
+    console.log('Initializing ROI Calculator...');
+    
+    // Verify Chart.js is available
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js not loaded! Calculator will not work.');
+        return;
+    }
+    
     const consultationInput = document.getElementById('consultationValue');
     const attendedPatientsInput = document.getElementById('attendedPatients');
     const lostPatientsInput = document.getElementById('lostPatients');
 
     // Early return if calculator section doesn't exist
-    if (!consultationInput || !lostPatientsInput || !attendedPatientsInput) return;
+    if (!consultationInput || !lostPatientsInput || !attendedPatientsInput) {
+        console.error('Calculator elements not found');
+        return;
+    }
 
     const valDisplay = document.getElementById('valDisplay');
     const attendedDisplay = document.getElementById('attendedDisplay');
@@ -577,7 +591,12 @@ function initCalculator() {
     const monthlyLossText = document.getElementById('monthlyLossText');
     const chartCanvas = document.getElementById('lossChart');
 
-    if (!chartCanvas) return;
+    if (!chartCanvas) {
+        console.error('Chart canvas not found');
+        return;
+    }
+
+    console.log('Calculator elements found');
 
     const ctx = chartCanvas.getContext('2d');
 
@@ -587,51 +606,57 @@ function initCalculator() {
     const errorColor = computedStyle.getPropertyValue('--error-color').trim();
     const backgroundGray = computedStyle.getPropertyValue('--background-gray').trim();
 
-    // Initialize Chart.js
-    let lossChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Ingresos Actuales', 'Potencial Real'],
-            datasets: [{
-                label: 'Proyección Mensual (COP)',
-                data: [0, 0],
-                backgroundColor: [backgroundGray, errorColor],
-                borderRadius: 8,
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const formatter = new Intl.NumberFormat('es-CO', {
-                                style: 'currency',
-                                currency: 'COP',
-                                maximumFractionDigits: 0
-                            });
-                            return formatter.format(context.parsed.y);
+    // Initialize Chart.js with try-catch
+    try {
+        globalLossChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Ingresos Actuales', 'Potencial Real'],
+                datasets: [{
+                    label: 'Proyección Mensual (COP)',
+                    data: [0, 0],
+                    backgroundColor: [backgroundGray, errorColor],
+                    borderRadius: 8,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const formatter = new Intl.NumberFormat('es-CO', {
+                                    style: 'currency',
+                                    currency: 'COP',
+                                    maximumFractionDigits: 0
+                                });
+                                return formatter.format(context.parsed.y);
+                            }
                         }
                     }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return '$' + (value / 1000000).toFixed(1) + 'M';
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1000000).toFixed(1) + 'M';
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+        console.log('Chart initialized successfully');
+    } catch (error) {
+        console.error('Chart initialization failed:', error);
+        return;
+    }
 
     /**
      * Update calculator values and chart
@@ -640,6 +665,8 @@ function initCalculator() {
         const price = parseInt(consultationInput.value);
         const lostPatients = parseInt(lostPatientsInput.value);
         const attendedPatients = parseInt(attendedPatientsInput.value);
+
+        console.log('Updating calculator...', { price, attendedPatients, lostPatients });
 
         // Format currency for Colombian Pesos
         const formatter = new Intl.NumberFormat('es-CO', {
@@ -662,8 +689,11 @@ function initCalculator() {
         monthlyLossText.textContent = formatter.format(monthlyLoss);
 
         // Update chart data with real values
-        lossChart.data.datasets[0].data = [currentRevenue, potentialRevenue];
-        lossChart.update('none'); // 'none' for instant update without animation
+        if (globalLossChart) {
+            globalLossChart.data.datasets[0].data = [currentRevenue, potentialRevenue];
+            globalLossChart.update('none'); // 'none' for instant update without animation
+            console.log('Chart updated');
+        }
 
         // Update slider background gradient for visual feedback
         updateSliderBackground(consultationInput, 50000, 300000);
@@ -689,14 +719,23 @@ function initCalculator() {
     }
 
     // Event listeners for real-time updates
-    consultationInput.addEventListener('input', updateCalc);
-    attendedPatientsInput.addEventListener('input', updateCalc);
-    lostPatientsInput.addEventListener('input', updateCalc);
+    consultationInput.addEventListener('input', () => {
+        console.log('slider changed');
+        updateCalc();
+    });
+    attendedPatientsInput.addEventListener('input', () => {
+        console.log('slider changed');
+        updateCalc();
+    });
+    lostPatientsInput.addEventListener('input', () => {
+        console.log('slider changed');
+        updateCalc();
+    });
 
     // Initial calculation on page load
     updateCalc();
 
-    console.log('ROI Calculator initialized');
+    console.log('ROI Calculator fully initialized');
 }
 
 /* ========================================
@@ -704,12 +743,31 @@ function initCalculator() {
    ======================================== */
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded - Starting initialization');
+    
     // Initialize all modules
     initMobileMenu();
     initSmoothScroll();
     updateActiveNavLink();
     initConsultationBooking();
-    initCalculator();
+    
+    // Initialize calculator with Chart.js verification
+    if (typeof Chart !== 'undefined') {
+        console.log('Chart.js detected, initializing calculator');
+        initCalculator();
+    } else {
+        console.error('Chart.js not loaded! Calculator will not work.');
+        // Retry after 500ms in case of slow CDN
+        setTimeout(() => {
+            if (typeof Chart !== 'undefined') {
+                console.log('Chart.js loaded on retry, initializing calculator');
+                initCalculator();
+            } else {
+                console.error('Chart.js still not available after retry');
+            }
+        }, 500);
+    }
+    
     initContactForm();
     initBackToTop();
 
