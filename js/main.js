@@ -567,50 +567,37 @@ let globalLossChart = null;
  * Handles slider interactions, real-time calculations, and chart updates
  */
 function initCalculator() {
-    console.log('[Calculator] Initialization started');
-    
-    // Verificar Chart.js con timeout
+    // Verificar Chart.js
     if (typeof Chart === 'undefined') {
-        console.error('[Calculator] Chart.js not available');
+        console.error('Chart.js not available');
         showChartError();
         return;
     }
-    
-    console.log('[Calculator] Chart.js detected, version:', Chart.version);
-    
+
     // Obtener elementos
     const consultationInput = document.getElementById('consultationValue');
     const attendedPatientsInput = document.getElementById('attendedPatients');
     const lostPatientsInput = document.getElementById('lostPatients');
     const chartCanvas = document.getElementById('lossChart');
     const chartLoader = document.getElementById('chartLoader');
-    
-    if (!consultationInput || !lostPatientsInput || !attendedPatientsInput) {
-        console.error('[Calculator] Input elements not found');
+
+    if (!consultationInput || !lostPatientsInput || !attendedPatientsInput || !chartCanvas) {
+        console.error('Calculator elements not found');
         return;
     }
-    
-    if (!chartCanvas) {
-        console.error('[Calculator] Canvas element not found');
-        return;
-    }
-    
-    console.log('[Calculator] All elements found');
-    
+
     const valDisplay = document.getElementById('valDisplay');
     const attendedDisplay = document.getElementById('attendedDisplay');
     const lostDisplay = document.getElementById('lostDisplay');
     const monthlyLossText = document.getElementById('monthlyLossText');
-    
+
     // Obtener contexto 2D
     const ctx = chartCanvas.getContext('2d');
     if (!ctx) {
-        console.error('[Calculator] Failed to get 2D context');
+        console.error('Failed to get canvas 2D context');
         showChartError();
         return;
     }
-    
-    console.log('[Calculator] Canvas context obtained');
     
     // Leer variables CSS
     const computedStyle = getComputedStyle(document.documentElement);
@@ -663,22 +650,18 @@ function initCalculator() {
             }
         });
         
-        console.log('[Calculator] Chart created successfully');
-        
         // Ocultar loader y mostrar canvas
         if (chartLoader) chartLoader.style.display = 'none';
         chartCanvas.style.display = 'block';
-        
+
     } catch (error) {
-        console.error('[Calculator] Chart creation failed:', error);
+        console.error('Chart creation failed:', error);
         showChartError();
         return;
     }
-    
+
     // Función de actualización
     function updateCalc() {
-        console.log('[Calculator] Updating values...');
-        
         const price = parseInt(consultationInput.value);
         const lostPatients = parseInt(lostPatientsInput.value);
         const attendedPatients = parseInt(attendedPatientsInput.value);
@@ -704,8 +687,7 @@ function initCalculator() {
         // Actualizar gráfico
         if (globalLossChart) {
             globalLossChart.data.datasets[0].data = [currentRevenue, potentialRevenue];
-            globalLossChart.update('none'); // 'none' para actualización instantánea sin animación
-            console.log('[Calculator] Chart updated:', { currentRevenue, potentialRevenue });
+            globalLossChart.update('none');
         }
         
         // Actualizar sliders visuales
@@ -732,8 +714,8 @@ function initCalculator() {
     
     // Cálculo inicial
     updateCalc();
-    
-    console.log('[Calculator] Initialization complete');
+
+    console.log('Calculator initialized');
 }
 
 function showChartError() {
@@ -748,8 +730,6 @@ function showChartError() {
    ======================================== */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('[Main] DOM Content Loaded');
-    
     // Inicializar módulos básicos
     initMobileMenu();
     initSmoothScroll();
@@ -757,27 +737,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initConsultationBooking();
     initContactForm();
     initBackToTop();
-    
-    // Estrategia de carga para Chart.js
-    function tryInitCalculator(attempt = 1) {
-        const maxAttempts = 5;
-        
-        if (typeof Chart !== 'undefined') {
-            console.log(`[Main] Chart.js ready on attempt ${attempt}`);
-            initCalculator();
-        } else if (attempt < maxAttempts) {
-            console.warn(`[Main] Chart.js not ready, attempt ${attempt}/${maxAttempts}`);
-            setTimeout(() => tryInitCalculator(attempt + 1), 300 * attempt); // Backoff: 300ms, 600ms, 900ms...
-        } else {
-            console.error('[Main] Chart.js failed to load after all attempts');
-            showChartError();
-        }
-    }
-    
-    // Iniciar con delay para dar tiempo a Chart.js
-    setTimeout(tryInitCalculator, 100);
-    
-    console.log('[Main] Outrun AI initialized');
+
+    // Inicializar calculadora (Chart.js ya está cargado)
+    initCalculator();
 });
 
 // Fallback adicional: intentar en window.onload si DOMContentLoaded falló
