@@ -567,52 +567,58 @@ let globalLossChart = null;
  * Handles slider interactions, real-time calculations, and chart updates
  */
 function initCalculator() {
-    console.log('Initializing ROI Calculator...');
+    console.log('[Calculator] Initialization started');
     
-    // Verify Chart.js is available
+    // Verificar Chart.js con timeout
     if (typeof Chart === 'undefined') {
-        console.error('Chart.js not loaded! Calculator will not work.');
+        console.error('[Calculator] Chart.js not available');
+        showChartError();
         return;
     }
     
+    console.log('[Calculator] Chart.js detected, version:', Chart.version);
+    
+    // Obtener elementos
     const consultationInput = document.getElementById('consultationValue');
     const attendedPatientsInput = document.getElementById('attendedPatients');
     const lostPatientsInput = document.getElementById('lostPatients');
-
-    // Early return if calculator section doesn't exist
+    const chartCanvas = document.getElementById('lossChart');
+    const chartLoader = document.getElementById('chartLoader');
+    
     if (!consultationInput || !lostPatientsInput || !attendedPatientsInput) {
-        console.error('Calculator elements not found');
+        console.error('[Calculator] Input elements not found');
         return;
     }
-
+    
+    if (!chartCanvas) {
+        console.error('[Calculator] Canvas element not found');
+        return;
+    }
+    
+    console.log('[Calculator] All elements found');
+    
     const valDisplay = document.getElementById('valDisplay');
     const attendedDisplay = document.getElementById('attendedDisplay');
     const lostDisplay = document.getElementById('lostDisplay');
     const monthlyLossText = document.getElementById('monthlyLossText');
-    const chartCanvas = document.getElementById('lossChart');
-
-    if (!chartCanvas) {
-        console.error('Chart canvas not found');
-        return;
-    }
-
-    console.log('Calculator elements found');
-
+    
+    // Obtener contexto 2D
     const ctx = chartCanvas.getContext('2d');
-
-    // Validar que el contexto se obtuvo correctamente
     if (!ctx) {
-        console.error('Failed to get 2D context from canvas');
+        console.error('[Calculator] Failed to get 2D context');
+        showChartError();
         return;
     }
-
-    // Read CSS variables for consistent theming
+    
+    console.log('[Calculator] Canvas context obtained');
+    
+    // Leer variables CSS
     const computedStyle = getComputedStyle(document.documentElement);
-    const primaryColor = computedStyle.getPropertyValue('--primary-color').trim();
-    const errorColor = computedStyle.getPropertyValue('--error-color').trim();
-    const backgroundGray = computedStyle.getPropertyValue('--background-gray').trim();
-
-    // Initialize Chart.js with try-catch
+    const primaryColor = computedStyle.getPropertyValue('--primary-color').trim() || '#0066FF';
+    const errorColor = computedStyle.getPropertyValue('--error-color').trim() || '#EF4444';
+    const backgroundGray = computedStyle.getPropertyValue('--background-gray').trim() || '#e2e8f0';
+    
+    // Inicializar Chart.js
     try {
         globalLossChart = new Chart(ctx, {
             type: 'bar',
@@ -630,9 +636,7 @@ function initCalculator() {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
@@ -658,97 +662,85 @@ function initCalculator() {
                 }
             }
         });
-        console.log('Chart initialized successfully');
+        
+        console.log('[Calculator] Chart created successfully');
+        
+        // Ocultar loader y mostrar canvas
+        if (chartLoader) chartLoader.style.display = 'none';
+        chartCanvas.style.display = 'block';
+        
     } catch (error) {
-        console.error('Chart initialization failed:', error);
-
-        // Mostrar mensaje de error visual al usuario
-        const chartCanvas = document.getElementById('lossChart');
-        if (chartCanvas) {
-            const errorMsg = document.createElement('div');
-            errorMsg.style.cssText = `
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-                padding: 2rem;
-                text-align: center;
-                color: var(--error-color);
-                font-size: 0.9rem;
-            `;
-            errorMsg.textContent = '⚠️ No se pudo cargar el gráfico. Por favor recarga la página.';
-            chartCanvas.parentElement.appendChild(errorMsg);
-            chartCanvas.style.display = 'none';
-        }
+        console.error('[Calculator] Chart creation failed:', error);
+        showChartError();
         return;
     }
-
-    /**
-     * Update calculator values and chart
-     */
+    
+    // Función de actualización
     function updateCalc() {
+        console.log('[Calculator] Updating values...');
+        
         const price = parseInt(consultationInput.value);
         const lostPatients = parseInt(lostPatientsInput.value);
         const attendedPatients = parseInt(attendedPatientsInput.value);
-
-        // Format currency for Colombian Pesos
+        
         const formatter = new Intl.NumberFormat('es-CO', {
             style: 'currency',
             currency: 'COP',
             maximumFractionDigits: 0
         });
-
-        // Update display values
+        
+        // Actualizar displays
         valDisplay.textContent = formatter.format(price);
         lostDisplay.textContent = lostPatients + ' paciente' + (lostPatients > 1 ? 's' : '');
         attendedDisplay.textContent = attendedPatients + ' paciente' + (attendedPatients > 1 ? 's' : '');
-
-        // Calculate revenues based on real data
-        const currentRevenue = attendedPatients * price * 4;        // Ingresos actuales reales
-        const potentialRevenue = (attendedPatients + lostPatients) * price * 4;  // Potencial real
-        const monthlyLoss = lostPatients * price * 4;               // Pérdida mensual
-
-        // Update text display (monthly loss remains the same)
+        
+        // Calcular ingresos
+        const currentRevenue = attendedPatients * price * 4;
+        const potentialRevenue = (attendedPatients + lostPatients) * price * 4;
+        const monthlyLoss = lostPatients * price * 4;
+        
         monthlyLossText.textContent = formatter.format(monthlyLoss);
-
-        // Update chart data with real values
+        
+        // Actualizar gráfico
         if (globalLossChart) {
             globalLossChart.data.datasets[0].data = [currentRevenue, potentialRevenue];
-            globalLossChart.update('active'); // 'active' for reliable updates in Chart.js 4.x
+            globalLossChart.update('none'); // 'none' para actualización instantánea sin animación
+            console.log('[Calculator] Chart updated:', { currentRevenue, potentialRevenue });
         }
-
-        // Update slider background gradient for visual feedback
+        
+        // Actualizar sliders visuales
         updateSliderBackground(consultationInput, 50000, 300000);
         updateSliderBackground(attendedPatientsInput, 10, 100);
         updateSliderBackground(lostPatientsInput, 1, 20);
-
-        // Update ARIA attributes for accessibility
+        
+        // ARIA
         consultationInput.setAttribute('aria-valuenow', price);
         attendedPatientsInput.setAttribute('aria-valuenow', attendedPatients);
         lostPatientsInput.setAttribute('aria-valuenow', lostPatients);
     }
-
-    /**
-     * Update slider background gradient based on value
-     * @param {HTMLInputElement} slider - The range input element
-     * @param {number} min - Minimum value
-     * @param {number} max - Maximum value
-     */
+    
     function updateSliderBackground(slider, min, max) {
         const value = parseInt(slider.value);
         const percentage = ((value - min) / (max - min)) * 100;
         slider.style.background = `linear-gradient(to right, var(--primary-color) 0%, var(--primary-color) ${percentage}%, #e2e8f0 ${percentage}%, #e2e8f0 100%)`;
     }
-
-    // Event listeners for real-time updates
+    
+    // Event listeners
     consultationInput.addEventListener('input', updateCalc);
     attendedPatientsInput.addEventListener('input', updateCalc);
     lostPatientsInput.addEventListener('input', updateCalc);
-
-    // Initial calculation on page load
+    
+    // Cálculo inicial
     updateCalc();
+    
+    console.log('[Calculator] Initialization complete');
+}
 
-    console.log('Calculator initialized');
+function showChartError() {
+    const chartLoader = document.getElementById('chartLoader');
+    if (chartLoader) {
+        chartLoader.innerHTML = '<span style="color: var(--error-color);">⚠️ Error al cargar el gráfico. <a href="#" onclick="location.reload(); return false;" style="text-decoration: underline;">Recargar página</a></span>';
+    }
 }
 
 /* ========================================
@@ -756,43 +748,45 @@ function initCalculator() {
    ======================================== */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM Content Loaded - Starting initialization');
+    console.log('[Main] DOM Content Loaded');
     
-    // Initialize all modules
+    // Inicializar módulos básicos
     initMobileMenu();
     initSmoothScroll();
     updateActiveNavLink();
     initConsultationBooking();
-    
-    // Initialize calculator with Chart.js verification
-    if (typeof Chart !== 'undefined') {
-        console.log('Chart.js detected, initializing calculator');
-        initCalculator();
-    } else {
-        console.warn('Chart.js not loaded yet, retrying...');
-
-        // Retry con backoff exponencial
-        let retryCount = 0;
-        const maxRetries = 3;
-
-        const retryInit = () => {
-            retryCount++;
-            if (typeof Chart !== 'undefined') {
-                console.log(`Chart.js loaded on retry ${retryCount}, initializing calculator`);
-                initCalculator();
-            } else if (retryCount < maxRetries) {
-                console.warn(`Retry ${retryCount}/${maxRetries} failed, trying again...`);
-                setTimeout(retryInit, 500 * retryCount); // Backoff: 500ms, 1000ms, 1500ms
-            } else {
-                console.error('Chart.js failed to load after multiple retries');
-            }
-        };
-
-        setTimeout(retryInit, 500);
-    }
-    
     initContactForm();
     initBackToTop();
+    
+    // Estrategia de carga para Chart.js
+    function tryInitCalculator(attempt = 1) {
+        const maxAttempts = 5;
+        
+        if (typeof Chart !== 'undefined') {
+            console.log(`[Main] Chart.js ready on attempt ${attempt}`);
+            initCalculator();
+        } else if (attempt < maxAttempts) {
+            console.warn(`[Main] Chart.js not ready, attempt ${attempt}/${maxAttempts}`);
+            setTimeout(() => tryInitCalculator(attempt + 1), 300 * attempt); // Backoff: 300ms, 600ms, 900ms...
+        } else {
+            console.error('[Main] Chart.js failed to load after all attempts');
+            showChartError();
+        }
+    }
+    
+    // Iniciar con delay para dar tiempo a Chart.js
+    setTimeout(tryInitCalculator, 100);
+    
+    console.log('[Main] Outrun AI initialized');
+});
 
-    console.log('Outrun AI - Website initialized');
+// Fallback adicional: intentar en window.onload si DOMContentLoaded falló
+window.addEventListener('load', function() {
+    console.log('[Main] Window fully loaded');
+    
+    // Solo intentar si el gráfico no se inicializó
+    if (!globalLossChart && typeof Chart !== 'undefined') {
+        console.log('[Main] Retrying calculator initialization on window.load');
+        initCalculator();
+    }
 });

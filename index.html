@@ -24,6 +24,11 @@
     <meta name="geo.region" content="CO">
     <meta name="geo.placename" content="Colombia">
     
+    <!-- Cache control meta tags - comentados para producción -->
+    <!-- <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0"> -->
+    
     <!-- Open Graph Tags -->
     <meta property="og:title" content="Outrun AI - Automatización WhatsApp para Clínicas">
     <meta property="og:description" content="Automatiza las interacciones con tus pacientes en WhatsApp">
@@ -229,7 +234,10 @@
 
                     <!-- Chart Panel -->
                     <div class="chart-wrapper">
-                        <canvas id="lossChart" style="width: 100%; height: 100%;" role="img" aria-label="Gráfico comparativo de ingresos actuales vs potencial real"></canvas>
+                        <div id="chartLoader" style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--primary-color); font-size: 0.9rem;">
+                            <span>⏳ Cargando gráfico...</span>
+                        </div>
+                        <canvas id="lossChart" style="width: 100%; height: 100%; display: none;" role="img" aria-label="Gráfico comparativo de ingresos actuales vs potencial real"></canvas>
                     </div>
                 </div>
             </div>
@@ -630,7 +638,11 @@
 
     <!-- Scripts -->
     <!-- Chart.js debe cargar ANTES de main.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <!-- Chart.js con fallback CDN -->
+    <script 
+        src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" 
+        onerror="this.onerror=null; this.removeAttribute('integrity'); this.removeAttribute('crossorigin'); this.src='https://unpkg.com/chart.js@4.4.1/dist/chart.umd.js'">
+    </script>
     <script src="./js/main.js" defer></script>
 </body>
 </html>
