@@ -650,7 +650,13 @@ function initCalculator() {
         });
 
         // Chart creado exitosamente - remover loader del DOM
-        if (chartLoader) chartLoader.remove();
+        console.log('Chart created, removing loader:', chartLoader);
+        if (chartLoader) {
+            chartLoader.remove();
+            console.log('Loader removed');
+        } else {
+            console.log('chartLoader not found!');
+        }
 
     } catch (error) {
         console.error('Chart creation failed:', error);
