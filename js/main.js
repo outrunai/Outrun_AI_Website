@@ -650,7 +650,7 @@ function initCalculator() {
         });
 
         // Chart creado exitosamente - ocultar loader
-        if (chartLoader) chartLoader.style.display = 'none';
+        if (chartLoader) chartLoader.classList.add('hidden');
 
     } catch (error) {
         console.error('Chart creation failed:', error);
