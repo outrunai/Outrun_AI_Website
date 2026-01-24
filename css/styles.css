@@ -767,10 +767,6 @@ input[type="range"]::-moz-range-track {
     font-size: 0.9rem;
 }
 
-#chartLoader.hidden {
-    display: none !important;
-}
-
 /* Responsive: Desktop */
 @media (min-width: 768px) {
     .calculator-grid {

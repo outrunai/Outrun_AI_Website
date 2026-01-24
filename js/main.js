@@ -256,13 +256,6 @@ window.addEventListener('error', (e) => {
     console.error('Error:', e.message, 'at', e.filename, ':', e.lineno);
 });
 
-/* ========================================
-   Performance Monitoring
-   ======================================== */
-
-window.addEventListener('load', () => {
-    console.log('Page loaded in:', Math.round(performance.now()), 'ms');
-});
 
 /* ========================================
    Analytics Placeholder
@@ -292,15 +285,13 @@ function initConsultationBooking() {
             const encodedMessage = encodeURIComponent(WHATSAPP_MESSAGE);
             const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
             window.open(whatsappUrl, '_blank');
-            console.log('WhatsApp booking initiated');
         });
     }
-    
+
     if (btnReservar) {
         btnReservar.addEventListener('click', function(e) {
             e.preventDefault();
             window.location.href = BOOKING_URL;
-            console.log('Primary booking initiated');
         });
     }
     
@@ -650,13 +641,7 @@ function initCalculator() {
         });
 
         // Chart creado exitosamente - remover loader del DOM
-        console.log('Chart created, removing loader:', chartLoader);
-        if (chartLoader) {
-            chartLoader.remove();
-            console.log('Loader removed');
-        } else {
-            console.log('chartLoader not found!');
-        }
+        if (chartLoader) chartLoader.remove();
 
     } catch (error) {
         console.error('Chart creation failed:', error);
@@ -734,25 +719,11 @@ function showChartError() {
    ======================================== */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar módulos básicos
     initMobileMenu();
     initSmoothScroll();
     updateActiveNavLink();
     initConsultationBooking();
     initContactForm();
     initBackToTop();
-
-    // Inicializar calculadora (Chart.js ya está cargado)
     initCalculator();
-});
-
-// Fallback adicional: intentar en window.onload si DOMContentLoaded falló
-window.addEventListener('load', function() {
-    console.log('[Main] Window fully loaded');
-    
-    // Solo intentar si el gráfico no se inicializó
-    if (!globalLossChart && typeof Chart !== 'undefined') {
-        console.log('[Main] Retrying calculator initialization on window.load');
-        initCalculator();
-    }
 });
