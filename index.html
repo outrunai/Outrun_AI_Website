@@ -171,7 +171,31 @@
                             </div>
                         </div>
 
-                        <!-- Slider 2: Lost Patients -->
+                        <!-- Slider 2: Attended Patients -->
+                        <div class="form-group" style="margin-top: 2rem;">
+                            <label for="attendedPatients" style="font-weight: bold; display: block; margin-bottom: 0.5rem;">
+                                Pacientes Atendidos por Semana
+                            </label>
+                            <input
+                                type="range"
+                                id="attendedPatients"
+                                min="10"
+                                max="100"
+                                step="5"
+                                value="40"
+                                aria-label="Número de pacientes atendidos por semana"
+                                aria-valuemin="10"
+                                aria-valuemax="100"
+                                aria-valuenow="40"
+                            >
+                            <div class="slider-labels">
+                                <span>10</span>
+                                <span id="attendedDisplay" aria-live="polite">40 pacientes</span>
+                                <span>100</span>
+                            </div>
+                        </div>
+
+                        <!-- Slider 3: Lost Patients -->
                         <div class="form-group" style="margin-top: 2rem;">
                             <label for="lostPatients" style="font-weight: bold; display: block; margin-bottom: 0.5rem;">
                                 Pacientes Perdidos por Semana

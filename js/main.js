@@ -565,12 +565,14 @@ function initBackToTop() {
  */
 function initCalculator() {
     const consultationInput = document.getElementById('consultationValue');
+    const attendedPatientsInput = document.getElementById('attendedPatients');
     const lostPatientsInput = document.getElementById('lostPatients');
 
     // Early return if calculator section doesn't exist
-    if (!consultationInput || !lostPatientsInput) return;
+    if (!consultationInput || !lostPatientsInput || !attendedPatientsInput) return;
 
     const valDisplay = document.getElementById('valDisplay');
+    const attendedDisplay = document.getElementById('attendedDisplay');
     const lostDisplay = document.getElementById('lostDisplay');
     const monthlyLossText = document.getElementById('monthlyLossText');
     const chartCanvas = document.getElementById('lossChart');
@@ -636,7 +638,8 @@ function initCalculator() {
      */
     function updateCalc() {
         const price = parseInt(consultationInput.value);
-        const patients = parseInt(lostPatientsInput.value);
+        const lostPatients = parseInt(lostPatientsInput.value);
+        const attendedPatients = parseInt(attendedPatientsInput.value);
 
         // Format currency for Colombian Pesos
         const formatter = new Intl.NumberFormat('es-CO', {
@@ -647,28 +650,30 @@ function initCalculator() {
 
         // Update display values
         valDisplay.textContent = formatter.format(price);
-        lostDisplay.textContent = patients + ' paciente' + (patients > 1 ? 's' : '');
+        lostDisplay.textContent = lostPatients + ' paciente' + (lostPatients > 1 ? 's' : '');
+        attendedDisplay.textContent = attendedPatients + ' paciente' + (attendedPatients > 1 ? 's' : '');
 
-        // Calculate monthly loss (price × patients × 4 weeks)
-        const monthlyLoss = price * patients * 4;
+        // Calculate revenues based on real data
+        const currentRevenue = attendedPatients * price * 4;        // Ingresos actuales reales
+        const potentialRevenue = (attendedPatients + lostPatients) * price * 4;  // Potencial real
+        const monthlyLoss = lostPatients * price * 4;               // Pérdida mensual
 
-        // Calculate base revenue (2x the loss for visualization)
-        const baseRevenue = monthlyLoss * 2;
-
-        // Update text display
+        // Update text display (monthly loss remains the same)
         monthlyLossText.textContent = formatter.format(monthlyLoss);
 
-        // Update chart data
-        lossChart.data.datasets[0].data = [baseRevenue, baseRevenue + monthlyLoss];
+        // Update chart data with real values
+        lossChart.data.datasets[0].data = [currentRevenue, potentialRevenue];
         lossChart.update('none'); // 'none' for instant update without animation
 
         // Update slider background gradient for visual feedback
         updateSliderBackground(consultationInput, 50000, 300000);
+        updateSliderBackground(attendedPatientsInput, 10, 100);
         updateSliderBackground(lostPatientsInput, 1, 20);
 
         // Update ARIA attributes for accessibility
         consultationInput.setAttribute('aria-valuenow', price);
-        lostPatientsInput.setAttribute('aria-valuenow', patients);
+        attendedPatientsInput.setAttribute('aria-valuenow', attendedPatients);
+        lostPatientsInput.setAttribute('aria-valuenow', lostPatients);
     }
 
     /**
@@ -685,6 +690,7 @@ function initCalculator() {
 
     // Event listeners for real-time updates
     consultationInput.addEventListener('input', updateCalc);
+    attendedPatientsInput.addEventListener('input', updateCalc);
     lostPatientsInput.addEventListener('input', updateCalc);
 
     // Initial calculation on page load
