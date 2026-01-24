@@ -219,18 +219,24 @@ function updateActiveNavLink() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const sectionId = entry.target.getAttribute('id');
-                
-                // Remove aria-current from all links
-                navLinks.forEach(link => {
-                    link.removeAttribute('aria-current');
-                });
-                
-                // Add aria-current to matching links
-                navLinks.forEach(link => {
-                    if (link.getAttribute('href') === `#${sectionId}`) {
+
+                // Check if there's a matching nav link for this section
+                const matchingLinks = Array.from(navLinks).filter(
+                    link => link.getAttribute('href') === `#${sectionId}`
+                );
+
+                // Only update aria-current if a matching link exists
+                if (matchingLinks.length > 0) {
+                    // Remove aria-current from all links
+                    navLinks.forEach(link => {
+                        link.removeAttribute('aria-current');
+                    });
+
+                    // Add aria-current to matching links
+                    matchingLinks.forEach(link => {
                         link.setAttribute('aria-current', 'page');
-                    }
-                });
+                    });
+                }
             }
         });
     };
@@ -813,6 +819,144 @@ function initBackToTop() {
 }
 
 /* ========================================
+   ROI Calculator
+   ======================================== */
+
+/**
+ * Initialize ROI Calculator functionality
+ * Handles slider interactions, real-time calculations, and chart updates
+ */
+function initCalculator() {
+    const consultationInput = document.getElementById('consultationValue');
+    const lostPatientsInput = document.getElementById('lostPatients');
+
+    // Early return if calculator section doesn't exist
+    if (!consultationInput || !lostPatientsInput) return;
+
+    const valDisplay = document.getElementById('valDisplay');
+    const lostDisplay = document.getElementById('lostDisplay');
+    const monthlyLossText = document.getElementById('monthlyLossText');
+    const chartCanvas = document.getElementById('lossChart');
+
+    if (!chartCanvas) return;
+
+    const ctx = chartCanvas.getContext('2d');
+
+    // Read CSS variables for consistent theming
+    const computedStyle = getComputedStyle(document.documentElement);
+    const primaryColor = computedStyle.getPropertyValue('--primary-color').trim();
+    const errorColor = computedStyle.getPropertyValue('--error-color').trim();
+    const backgroundGray = computedStyle.getPropertyValue('--background-gray').trim();
+
+    // Initialize Chart.js
+    let lossChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Ingresos Actuales', 'Potencial Real'],
+            datasets: [{
+                label: 'Proyección Mensual (COP)',
+                data: [0, 0],
+                backgroundColor: [backgroundGray, errorColor],
+                borderRadius: 8,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const formatter = new Intl.NumberFormat('es-CO', {
+                                style: 'currency',
+                                currency: 'COP',
+                                maximumFractionDigits: 0
+                            });
+                            return formatter.format(context.parsed.y);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + (value / 1000000).toFixed(1) + 'M';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    /**
+     * Update calculator values and chart
+     */
+    function updateCalc() {
+        const price = parseInt(consultationInput.value);
+        const patients = parseInt(lostPatientsInput.value);
+
+        // Format currency for Colombian Pesos
+        const formatter = new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            maximumFractionDigits: 0
+        });
+
+        // Update display values
+        valDisplay.textContent = formatter.format(price);
+        lostDisplay.textContent = patients + ' paciente' + (patients > 1 ? 's' : '');
+
+        // Calculate monthly loss (price × patients × 4 weeks)
+        const monthlyLoss = price * patients * 4;
+
+        // Calculate base revenue (2x the loss for visualization)
+        const baseRevenue = monthlyLoss * 2;
+
+        // Update text display
+        monthlyLossText.textContent = formatter.format(monthlyLoss);
+
+        // Update chart data
+        lossChart.data.datasets[0].data = [baseRevenue, baseRevenue + monthlyLoss];
+        lossChart.update('none'); // 'none' for instant update without animation
+
+        // Update slider background gradient for visual feedback
+        updateSliderBackground(consultationInput, 50000, 300000);
+        updateSliderBackground(lostPatientsInput, 1, 20);
+
+        // Update ARIA attributes for accessibility
+        consultationInput.setAttribute('aria-valuenow', price);
+        lostPatientsInput.setAttribute('aria-valuenow', patients);
+    }
+
+    /**
+     * Update slider background gradient based on value
+     * @param {HTMLInputElement} slider - The range input element
+     * @param {number} min - Minimum value
+     * @param {number} max - Maximum value
+     */
+    function updateSliderBackground(slider, min, max) {
+        const value = parseInt(slider.value);
+        const percentage = ((value - min) / (max - min)) * 100;
+        slider.style.background = `linear-gradient(to right, var(--primary-color) 0%, var(--primary-color) ${percentage}%, #e2e8f0 ${percentage}%, #e2e8f0 100%)`;
+    }
+
+    // Event listeners for real-time updates
+    consultationInput.addEventListener('input', updateCalc);
+    lostPatientsInput.addEventListener('input', updateCalc);
+
+    // Initial calculation on page load
+    updateCalc();
+
+    console.log('ROI Calculator initialized');
+}
+
+/* ========================================
    DOMContentLoaded - Initialize All
    ======================================== */
 
@@ -822,9 +966,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     updateActiveNavLink();
     initConsultationBooking();
+    initCalculator();
     initContactForm();
     initTestimonialsCarousel();
     initBackToTop();
-    
+
     console.log('Outrun AI - Website initialized');
 });

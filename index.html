@@ -60,6 +60,9 @@
       }
     }
     </script>
+
+    <!-- Chart.js for ROI Calculator -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <!-- Skip Link for Accessibility -->
@@ -131,6 +134,81 @@
                         <source srcset="./assets/images/Hero_image/Hero_image.webp" type="image/webp">
                         <img src="./assets/images/Hero_image/Hero_image.png" alt="Automatización de WhatsApp para clínicas en Colombia" width="600" height="400" loading="eager">
                     </picture>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROI Calculator Section -->
+        <section id="calculadora" class="section" style="background-color: var(--background-light);" aria-labelledby="calculadora-title">
+            <div class="container">
+                <h2 id="calculadora-title" class="section-title">¿Cuánto Dinero Pierde tu Clínica Hoy?</h2>
+                <p class="section-subtitle">Simula el impacto financiero de los pacientes que no asisten a sus citas.</p>
+
+                <div class="calculator-grid">
+                    <!-- Controls Panel -->
+                    <div class="calculator-controls">
+                        <!-- Slider 1: Consultation Value -->
+                        <div class="form-group">
+                            <label for="consultationValue" style="font-weight: bold; display: block; margin-bottom: 0.5rem;">
+                                Valor Promedio por Consulta
+                            </label>
+                            <input
+                                type="range"
+                                id="consultationValue"
+                                min="50000"
+                                max="300000"
+                                step="10000"
+                                value="120000"
+                                aria-label="Valor promedio por consulta en pesos colombianos"
+                                aria-valuemin="50000"
+                                aria-valuemax="300000"
+                                aria-valuenow="120000"
+                            >
+                            <div class="slider-labels">
+                                <span>$50k</span>
+                                <span id="valDisplay" aria-live="polite">$120.000</span>
+                                <span>$300k</span>
+                            </div>
+                        </div>
+
+                        <!-- Slider 2: Lost Patients -->
+                        <div class="form-group" style="margin-top: 2rem;">
+                            <label for="lostPatients" style="font-weight: bold; display: block; margin-bottom: 0.5rem;">
+                                Pacientes Perdidos por Semana
+                            </label>
+                            <input
+                                type="range"
+                                id="lostPatients"
+                                min="1"
+                                max="20"
+                                step="1"
+                                value="5"
+                                aria-label="Número de pacientes perdidos por semana"
+                                aria-valuemin="1"
+                                aria-valuemax="20"
+                                aria-valuenow="5"
+                            >
+                            <div class="slider-labels">
+                                <span>1</span>
+                                <span id="lostDisplay" aria-live="polite">5 pacientes</span>
+                                <span>20</span>
+                            </div>
+                        </div>
+
+                        <!-- Loss Display Box -->
+                        <div class="loss-display">
+                            <p style="margin: 0; font-size: 0.9rem;">Estás dejando de percibir aprox:</p>
+                            <p id="monthlyLossText" aria-live="polite" style="font-size: 2rem; font-weight: 800; color: var(--text-dark); margin: 0;">
+                                $2.400.000
+                            </p>
+                            <p style="margin: 0; font-size: 0.9rem;">mensuales en facturación.</p>
+                        </div>
+                    </div>
+
+                    <!-- Chart Panel -->
+                    <div class="chart-wrapper">
+                        <canvas id="lossChart" role="img" aria-label="Gráfico comparativo de ingresos actuales vs potencial real"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
