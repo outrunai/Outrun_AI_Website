@@ -598,13 +598,12 @@ function initCalculator() {
         showChartError();
         return;
     }
-    
+
     // Leer variables CSS
     const computedStyle = getComputedStyle(document.documentElement);
-    const primaryColor = computedStyle.getPropertyValue('--primary-color').trim() || '#0066FF';
     const errorColor = computedStyle.getPropertyValue('--error-color').trim() || '#EF4444';
     const backgroundGray = computedStyle.getPropertyValue('--background-gray').trim() || '#e2e8f0';
-    
+
     // Inicializar Chart.js
     try {
         globalLossChart = new Chart(ctx, {
@@ -649,10 +648,9 @@ function initCalculator() {
                 }
             }
         });
-        
-        // Ocultar loader y mostrar canvas
+
+        // Chart creado exitosamente - ocultar loader
         if (chartLoader) chartLoader.style.display = 'none';
-        chartCanvas.style.display = 'block';
 
     } catch (error) {
         console.error('Chart creation failed:', error);
