@@ -61,8 +61,6 @@
     }
     </script>
 
-    <!-- Chart.js for ROI Calculator -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- Skip Link for Accessibility -->
@@ -631,6 +629,8 @@
     </noscript>
 
     <!-- Scripts -->
+    <!-- Chart.js debe cargar ANTES de main.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer crossorigin="anonymous"></script>
     <script src="./js/main.js" defer></script>
 </body>
 </html>

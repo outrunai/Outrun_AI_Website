@@ -600,6 +600,12 @@ function initCalculator() {
 
     const ctx = chartCanvas.getContext('2d');
 
+    // Validar que el contexto se obtuvo correctamente
+    if (!ctx) {
+        console.error('Failed to get 2D context from canvas');
+        return;
+    }
+
     // Read CSS variables for consistent theming
     const computedStyle = getComputedStyle(document.documentElement);
     const primaryColor = computedStyle.getPropertyValue('--primary-color').trim();
@@ -655,6 +661,25 @@ function initCalculator() {
         console.log('Chart initialized successfully');
     } catch (error) {
         console.error('Chart initialization failed:', error);
+
+        // Mostrar mensaje de error visual al usuario
+        const chartCanvas = document.getElementById('lossChart');
+        if (chartCanvas) {
+            const errorMsg = document.createElement('div');
+            errorMsg.style.cssText = `
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                padding: 2rem;
+                text-align: center;
+                color: var(--error-color);
+                font-size: 0.9rem;
+            `;
+            errorMsg.textContent = '⚠️ No se pudo cargar el gráfico. Por favor recarga la página.';
+            chartCanvas.parentElement.appendChild(errorMsg);
+            chartCanvas.style.display = 'none';
+        }
         return;
     }
 
@@ -691,7 +716,7 @@ function initCalculator() {
         // Update chart data with real values
         if (globalLossChart) {
             globalLossChart.data.datasets[0].data = [currentRevenue, potentialRevenue];
-            globalLossChart.update('none'); // 'none' for instant update without animation
+            globalLossChart.update('active'); // 'active' for reliable updates in Chart.js 4.x
             console.log('Chart updated');
         }
 
@@ -756,16 +781,26 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Chart.js detected, initializing calculator');
         initCalculator();
     } else {
-        console.error('Chart.js not loaded! Calculator will not work.');
-        // Retry after 500ms in case of slow CDN
-        setTimeout(() => {
+        console.warn('Chart.js not loaded yet, retrying...');
+
+        // Retry con backoff exponencial
+        let retryCount = 0;
+        const maxRetries = 3;
+
+        const retryInit = () => {
+            retryCount++;
             if (typeof Chart !== 'undefined') {
-                console.log('Chart.js loaded on retry, initializing calculator');
+                console.log(`Chart.js loaded on retry ${retryCount}, initializing calculator`);
                 initCalculator();
+            } else if (retryCount < maxRetries) {
+                console.warn(`Retry ${retryCount}/${maxRetries} failed, trying again...`);
+                setTimeout(retryInit, 500 * retryCount); // Backoff: 500ms, 1000ms, 1500ms
             } else {
-                console.error('Chart.js still not available after retry');
+                console.error('Chart.js failed to load after multiple retries');
             }
-        }, 500);
+        };
+
+        setTimeout(retryInit, 500);
     }
     
     initContactForm();
